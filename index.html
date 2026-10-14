@@ -6,8 +6,8 @@
 <title>تسجيل العمالة</title>
 <meta name="theme-color" content="#4F0F20" id="metaTheme">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="تسجيل العمالة">
@@ -105,6 +105,9 @@ body.locked #gate{display:flex}body.locked .wrap,body.locked .tabbar{display:non
 .gbox h1{margin:0 0 4px;font-size:20px}.gbox p{margin:0 0 6px;font-size:13px;color:var(--sub)}
 #gErr{color:var(--accent);font-weight:700;font-size:13px;margin-top:10px;min-height:18px}
 body.role-user .admin-only{display:none!important}
+.inst{margin-top:14px;border:1.5px dashed var(--accent-line);background:var(--accent-soft);border-radius:14px;padding:12px;font-size:13.5px;color:var(--ink)}
+.inst b{display:block;margin-bottom:6px;color:var(--accent);font-size:14.5px}.inst ol{margin:6px 0 0;padding-right:20px;color:var(--sub);line-height:1.8}.inst .btn{margin-top:8px}
+body.standalone .inst{display:none!important}
 body.no-eval .evaltab{display:none!important}
 .ochips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.ochip{border:1.5px solid var(--border);border-radius:20px;padding:5px 11px;font-size:12.5px;font-weight:700;background:var(--field);cursor:pointer}.ochip.zero{opacity:.55;border-style:dashed}.ochip.on{outline:2px solid var(--accent)}
 .evc{border-right:6px solid var(--accent);border-radius:14px;background:var(--field);padding:10px 12px;margin-bottom:10px}.evc h4{margin:0 0 8px;font-size:15px}.evg{font-size:12.5px;font-weight:800;color:var(--accent);margin:8px 0 4px}.evr{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:13.5px}.evr input{width:84px;text-align:center}
@@ -178,7 +181,9 @@ body.no-eval .evaltab{display:none!important}
 <div id="gate"><div class="gbox"><h1>تسجيل العمالة</h1><p>سجّل دخولك بالكود اللي المدير إداك.</p>
   <label class="l">رابط الشيت (Web App)</label><input id="gUrl" dir="ltr" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
   <label class="l">كود الدخول</label><input id="gCode" type="password" dir="ltr" autocomplete="off">
-  <button class="btn" id="gEnter">دخول</button><div id="gErr"></div></div></div>
+  <button class="btn" id="gEnter">دخول</button><div id="gErr"></div><div class="inst"><b>📲 ثبّت التطبيق على موبايلك</b>
+    <button type="button" class="btn instbtn" style="display:none">تثبيت دلوقتي</button>
+    <div class="instsw"></div></div></div></div>
 <div class="wrap">
 <header>
   <div class="row">
@@ -277,6 +282,9 @@ body.no-eval .evaltab{display:none!important}
   <div class="card"><h2>ربط الشيت</h2>
     <div class="row2"><button class="btn sec" id="btnPing">اختبار الاتصال</button><button class="btn sec" id="btnSyncNow">ارسال المعلّق</button></div>
     <div id="whoami" style="display:none"></div>
+    <div class="inst"><b>📲 ثبّت التطبيق على موبايلك</b>
+    <button type="button" class="btn instbtn" style="display:none">تثبيت دلوقتي</button>
+    <div class="instsw"></div></div>
     <button class="btn sec admin-only" id="btnPullLists">جلب القوائم والأسعار من الشيت</button>
     <button class="btn danger" id="btnLogout">تسجيل الخروج من الجهاز</button>
     <p class="note" id="syncNote"></p></div>
@@ -713,6 +721,27 @@ $('fileRestore').onchange=async e=>{const f=e.target.files[0];e.target.value='';
     S.records=recs;S.pendingDel=[];if(!Array.isArray(o)&&o.settings){S.settings=Object.assign(S.settings,o.settings);S.settings.lists=Object.assign(JSON.parse(JSON.stringify(DEF.lists)),o.settings.lists||{})}
     save();renderForm();renderSettings();updateSyncPill();sync();toast('اتستعادت '+recs.length+' تسجيل ✓')}
   catch(err){toast('الملف مش مقروء: '+(err.message||err))}};
+
+/* ================= تثبيت التطبيق (للناس اللي مش بتعرف) ================= */
+let deferredInstall=null;
+const isStandalone=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
+function installSteps(){
+  const ua=navigator.userAgent||'',ios=/iPhone|iPad|iPod/.test(ua),android=/Android/.test(ua),chrome=/Chrome|CriOS/.test(ua)&&!/EdgA|OPR|SamsungBrowser|MiuiBrowser|UCBrowser/.test(ua);
+  if(ios)return '<ol><li>افتح الرابط من <b style="display:inline;color:inherit">Safari</b> (مش من واتساب أو متصفح تاني).</li><li>دوس زر <b style="display:inline;color:inherit">المشاركة</b> (المربع اللي فيه سهم لفوق).</li><li>اختار <b style="display:inline;color:inherit">إضافة إلى الشاشة الرئيسية</b> ثم <b style="display:inline;color:inherit">إضافة</b>.</li></ol>';
+  const first=android&&!chrome?'<li>انسخ الرابط وافتحه في <b style="display:inline;color:inherit">Chrome</b>.</li>':'';
+  return '<ol>'+first+'<li>دوس على النقط التلاتة <b style="display:inline;color:inherit">⋮</b> فوق على اليمين أو الشمال.</li><li>اختار <b style="display:inline;color:inherit">تثبيت التطبيق</b> أو <b style="display:inline;color:inherit">إضافة إلى الشاشة الرئيسية</b>.</li><li>دوس <b style="display:inline;color:inherit">تثبيت</b> أو <b style="display:inline;color:inherit">إضافة</b>، وهتلاقي الأيقونة على الشاشة الرئيسية.</li></ol><div style="margin-top:6px;color:var(--faint)">مهم: ادخل بالرابط اللي آخره <b style="display:inline;color:inherit">/</b> وإنت متصل بالنت، وافتح التطبيق مرة قبل ما تقفل النت.</div>';
+}
+function drawInstall(){
+  if(isStandalone())document.body.classList.add('standalone');
+  document.querySelectorAll('.inst').forEach(b=>{
+    b.querySelector('.instsw').innerHTML=installSteps();
+    const btn=b.querySelector('.instbtn');btn.style.display=deferredInstall?'block':'none';
+    btn.onclick=async()=>{if(!deferredInstall)return;deferredInstall.prompt();try{await deferredInstall.userChoice}catch(e){}deferredInstall=null;drawInstall()};
+  });
+}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;drawInstall()});
+window.addEventListener('appinstalled',()=>{deferredInstall=null;document.body.classList.add('standalone');toast('اتثبّت التطبيق ✓')});
+drawInstall();
 
 /* تشغيل بدون نت: تخزين نسخة التطبيق على الجهاز */
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}

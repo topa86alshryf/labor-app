@@ -1,6 +1,6 @@
 // نسخة التخزين: غيّر الرقم لما تنزّل تحديث جديد عشان الأجهزة تاخد النسخة الجديدة
-const VERSION = 'labor-v2';
-const FILES = ['./', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png'];
+const VERSION = 'labor-v3';
+const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
