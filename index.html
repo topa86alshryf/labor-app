@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>تسجيل العمالة</title>
+<meta name="theme-color" content="#4F0F20" id="metaTheme">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="تسجيل العمالة">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<script>try{if(localStorage.getItem("wl-theme")==="dark"){document.documentElement.classList.add("dark");}}catch(e){}</script>
+<style>
+:root{
+  --bg:#F1F1F3;--card:#FFFFFF;--border:#E9E9EC;--ink:#1B1B1F;--sub:#4A4A52;--faint:#85858F;
+  --accent:#D0112B;--accent-soft:#D0112B12;--accent-line:#D0112B40;--grad-a:#C8101F;--grad-b:#4F0F20;
+  --field:#F6F6F8;--line:#EFEFF2;--menu:#FFFFFF;--toast-bg:#1B1B1F;--rose:#FDE6E9;
+  --ok:#14804A;--warn:#B7791F;--overlay:rgba(20,10,12,.45);--shadow:0 2px 14px rgba(40,20,26,.06);
+}
+html.dark{
+  color-scheme:dark;--bg:#0F0B0C;--card:#1C1416;--border:#2E2226;--ink:#F6EFF0;--sub:#CDBFC2;--faint:#9A8A8E;
+  --accent:#FF5468;--accent-soft:#FF54681F;--accent-line:#FF546866;--grad-a:#8E1228;--grad-b:#220B12;
+  --field:#150F11;--line:#2A1F23;--menu:#221A1D;--toast-bg:#34262B;--rose:#3A1A22;--ok:#4CD08E;--warn:#F0B84A;
+  --overlay:rgba(5,2,3,.65);--shadow:0 2px 18px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,Arial,sans-serif;min-height:100vh}
+.wrap{max-width:440px;margin:0 auto;min-height:100vh;padding-bottom:96px}
+header{background:linear-gradient(135deg,var(--grad-a),var(--grad-b));color:#fff;padding:20px 18px 30px;border-radius:0 0 28px 28px}
+header .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+header h1{font-size:17px;margin:0;font-weight:800}
+header p{margin:3px 0 0;font-size:13px;color:rgba(255,255,255,.88)}
+.icon-circle{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;border:none;color:#fff;cursor:pointer;padding:0;flex-shrink:0}
+.icon-circle svg{width:20px;height:20px}
+#syncPill{margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;background:rgba(255,255,255,.16);padding:5px 12px;border-radius:20px;cursor:pointer;border:none;color:#fff}
+.view{display:none;padding:0 14px}.view.active{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:14px;margin-top:-18px;margin-bottom:12px;position:relative}
+.view .card:not(:first-child){margin-top:0}
+.card h2{font-size:14.5px;margin:0 0 10px;font-weight:800}
+label.l{display:block;font-size:12.5px;color:var(--sub);font-weight:700;margin:11px 0 5px}
+label.l:first-of-type{margin-top:0}
+input,select,textarea{width:100%;background:var(--field);color:var(--ink);border:1px solid var(--border);border-radius:12px;padding:11px 12px;font:inherit;font-size:15px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent-line);border-color:var(--accent)}
+textarea{min-height:60px;resize:vertical}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;min-width:60px;padding:10px 6px;border-radius:12px;border:1.5px solid var(--border);background:var(--field);color:var(--sub);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.seg button.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.stepper{display:flex;align-items:stretch;gap:8px}
+.stepper button{width:52px;border-radius:12px;border:1.5px solid var(--border);background:var(--field);color:var(--accent);font-size:24px;font-weight:700;cursor:pointer}
+.stepper input{text-align:center;font-size:20px;font-weight:800}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.preview{background:var(--rose);border-radius:14px;padding:12px;margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.preview b{display:block;font-size:17px;color:var(--accent)}.preview span{font-size:11.5px;color:var(--sub)}
+.btn{width:100%;border:none;border-radius:14px;padding:14px;font:inherit;font-size:16px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--grad-a),var(--grad-b));color:#fff;margin-top:14px}
+.btn.sec{background:var(--field);color:var(--ink);border:1.5px solid var(--border);font-size:14px;padding:11px;margin-top:8px}
+.btn.danger{background:var(--rose);color:var(--accent);border:1.5px solid var(--accent-line);font-size:14px;padding:11px;margin-top:8px}
+.btn.small{width:auto;padding:8px 14px;font-size:13px;margin:0}
+.row2{display:flex;gap:8px}.row2>*{flex:1}
+.note{font-size:12px;color:var(--faint);line-height:1.6;margin:6px 0 0}
+.warnbox{background:#fff3cd;color:#664d03;border-radius:12px;padding:9px 12px;font-size:13px;margin-top:10px;display:none}
+html.dark .warnbox{background:#3A2F12;color:#F5D98A}
+.daynav{display:flex;align-items:center;gap:8px}
+.daynav input{text-align:center;font-weight:800}
+.daynav button{width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);background:var(--field);color:var(--accent);font-size:20px;font-weight:700;cursor:pointer}
+.rec{border:1px solid var(--border);border-radius:14px;padding:11px 12px;margin-top:9px;background:var(--field);cursor:pointer}
+.rec .top{display:flex;justify-content:space-between;gap:8px;font-weight:800;font-size:14.5px}
+.rec .mid{font-size:13px;color:var(--sub);margin-top:4px}
+.rec .bot{display:flex;justify-content:space-between;align-items:center;margin-top:7px;font-size:13px}
+.tag{font-size:11.5px;padding:2px 9px;border-radius:20px;font-weight:700}
+.tag.ok{background:#14804A22;color:var(--ok)}.tag.wait{background:#B7791F22;color:var(--warn)}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.kpi{background:var(--field);border-radius:14px;padding:11px;text-align:center}
+.kpi b{display:block;font-size:18px;color:var(--accent)}.kpi span{font-size:12px;color:var(--sub)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:7px 4px;text-align:center;border-bottom:1px solid var(--line)}
+th{color:var(--sub);font-weight:800;background:var(--field);position:sticky;top:0}
+td.n{text-align:right;font-weight:700}
+tfoot td{font-weight:800;color:var(--accent);border-top:2px solid var(--accent-line)}
+.tscroll{overflow-x:auto;margin:0 -4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--field);border:1px solid var(--border);border-radius:20px;padding:6px 6px 6px 12px;font-size:13.5px;font-weight:600}
+.chip button{border:none;background:var(--accent-soft);color:var(--accent);width:22px;height:22px;border-radius:50%;font-size:14px;cursor:pointer;line-height:1;padding:0}
+.addrow{display:flex;gap:6px;margin-top:8px}.addrow input{flex:1}
+.ratesrow{display:grid;grid-template-columns:1fr 1fr 40px;gap:6px;margin-top:6px}
+.tabbar{position:fixed;left:10px;right:10px;margin:0 auto;max-width:420px;bottom:calc(8px + env(safe-area-inset-bottom));z-index:80;display:flex;padding:4px;border-radius:30px;background:color-mix(in srgb,var(--menu) 86%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--border);box-shadow:0 12px 32px rgba(15,25,20,.16)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:1.5px solid transparent;background:transparent;color:var(--faint);font:inherit;height:50px;border-radius:26px;cursor:pointer}
+.tab svg{width:22px;height:22px;stroke-width:1.7}.tab .lb{font-size:11px;font-weight:600;line-height:1}
+.tab.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-line)}.tab.active .lb{font-weight:800}
+.tab.exit{color:var(--accent)}
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--toast-bg);color:#fff;padding:12px 20px;border-radius:12px;font-size:14.5px;max-width:88%;text-align:center;z-index:200;opacity:0;transition:.25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal{position:fixed;inset:0;background:var(--overlay);z-index:110;display:none;align-items:flex-end;justify-content:center}
+.modal.show{display:flex}
+.sheet{background:var(--card);width:100%;max-width:440px;border-radius:18px 18px 0 0;padding:18px;max-height:85vh;overflow-y:auto}
+.sheet h3{margin:0 0 8px;font-size:15px}
+.printhead{display:none}
+#gate{position:fixed;inset:0;z-index:400;background:linear-gradient(135deg,var(--grad-a),var(--grad-b));display:none;align-items:center;justify-content:center;padding:22px}
+body.locked #gate{display:flex}body.locked .wrap,body.locked .tabbar{display:none}
+.gbox{background:var(--card);border-radius:22px;padding:22px;width:100%;max-width:400px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.gbox h1{margin:0 0 4px;font-size:20px}.gbox p{margin:0 0 6px;font-size:13px;color:var(--sub)}
+#gErr{color:var(--accent);font-weight:700;font-size:13px;margin-top:10px;min-height:18px}
+body.role-user .admin-only{display:none!important}
+body.no-eval .evaltab{display:none!important}
+.ochips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.ochip{border:1.5px solid var(--border);border-radius:20px;padding:5px 11px;font-size:12.5px;font-weight:700;background:var(--field);cursor:pointer}.ochip.zero{opacity:.55;border-style:dashed}.ochip.on{outline:2px solid var(--accent)}
+.evc{border-right:6px solid var(--accent);border-radius:14px;background:var(--field);padding:10px 12px;margin-bottom:10px}.evc h4{margin:0 0 8px;font-size:15px}.evg{font-size:12.5px;font-weight:800;color:var(--accent);margin:8px 0 4px}.evr{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:13.5px}.evr input{width:84px;text-align:center}
+.ro{font-size:11.5px;color:var(--faint)}
+#whoami{margin-top:10px;padding:9px 12px;border-radius:12px;background:var(--rose);font-size:13.5px;font-weight:700;color:var(--accent)}
+@media print{
+  :root,html.dark{--bg:#fff;--card:#fff;--ink:#000;--sub:#333;--faint:#555;--field:#f3f3f3;--line:#ddd;--border:#ccc;--accent:#8a0f1f}
+  body{background:#fff}
+  header,.tabbar,.toast,.modal,.view:not(#v-rep),#v-rep>.card:not(.invcard),.invcard .btn{display:none!important}
+  .wrap{padding:0!important;max-width:none}
+  #v-rep{display:block!important;padding:0}
+  .invcard{box-shadow:none;border:none;margin:0!important;padding:0}
+  .printhead{display:block;margin-bottom:12px}
+  .invcard>#invTitle{display:none}
+  .printhead h2{margin:0 0 4px;font-size:20px}
+  table{font-size:13px}th{position:static}
+}
+.empty{text-align:center;color:var(--faint);padding:22px 8px;font-size:14px}
+
+/* ===================== شاشات الكمبيوتر والتابلت العريض ===================== */
+@media (min-width:900px){
+  .wrap{max-width:none;margin:0 230px 0 0;padding:0 32px 40px!important}
+  header{border-radius:0 0 24px 24px;padding:22px 28px 26px;margin:0 -32px}
+  header h1{font-size:20px}header p{font-size:14px}
+  .view{max-width:1120px;margin:0 auto;padding:22px 0 0}
+  .card{margin-top:0!important;margin-bottom:16px}
+  .card{padding:20px}
+  .tabbar{position:fixed;top:0;bottom:0;right:0;left:auto;margin:0;max-width:none;width:230px;flex-direction:column;justify-content:flex-start;gap:6px;
+    padding:18px 14px;border-radius:0;border-width:0 0 0 1px;background:var(--menu);-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}
+  .tabbar::before{content:"تسجيل العمالة";display:block;font-weight:800;font-size:18px;color:var(--accent);padding:6px 12px 18px}
+  .tab{flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:12px;height:48px;width:100%;padding:0 16px;border-radius:14px}
+  .tab .lb{font-size:14.5px}.tab svg{width:22px;height:22px}
+  .tab:hover{background:var(--accent-soft);color:var(--accent)}
+  .tab.exit{margin-top:auto}
+  .toast{bottom:28px}
+  .modal{align-items:center}.sheet{border-radius:20px;max-width:460px}
+  .btn:hover,.seg button:hover,.stepper button:hover,.daynav button:hover{filter:brightness(1.06)}
+  .seg button:hover:not(.on){border-color:var(--accent-line)}
+
+  /* تسجيل: عمود الحقول | عمود المعاينة والأزرار */
+  #v-entry .card{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);column-gap:40px;align-items:start}
+  #v-entry .card>h2{grid-column:1/-1}
+  #v-entry .fside{position:sticky;top:20px}
+  #v-entry .fside .preview{margin-top:0}
+  .preview b{font-size:22px}
+
+  /* السجل: التحكم على جنب والقائمة واسعة */
+  #v-log.active{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+  #v-log .card{margin-bottom:0}
+  #lList{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:0 12px}
+
+  #v-eval .evgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0 12px}
+
+  /* التقارير */
+  #v-rep .kpis{grid-template-columns:repeat(4,1fr)}
+  #v-rep table{font-size:14px}
+  th,td{padding:9px 6px}
+
+  /* الإعدادات: كروت جنب بعض */
+  #v-set.active{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  #v-set .card{margin-bottom:0}
+}
+@media (min-width:1500px){
+  .view{max-width:1280px}
+  #v-set.active{grid-template-columns:1fr 1fr 1fr}
+}
+@media print{.wrap{margin:0!important;padding:0!important}header{margin:0}}
+</style>
+</head>
+<body>
+<div id="gate"><div class="gbox"><h1>تسجيل العمالة</h1><p>سجّل دخولك بالكود اللي المدير إداك.</p>
+  <label class="l">رابط الشيت (Web App)</label><input id="gUrl" dir="ltr" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
+  <label class="l">كود الدخول</label><input id="gCode" type="password" dir="ltr" autocomplete="off">
+  <button class="btn" id="gEnter">دخول</button><div id="gErr"></div></div></div>
+<div class="wrap">
+<header>
+  <div class="row">
+    <div><h1>تسجيل العمالة</h1><p id="hSub">تسجيل عمالة المكاتب</p></div>
+    <button class="icon-circle" id="btnTheme" aria-label="الوضع الليلي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+  </div>
+  <button id="syncPill" type="button"><span id="syncTxt">الشيت غير مربوط</span></button>
+</header>
+
+<!-- ============ تسجيل ============ -->
+<section class="view active" id="v-entry">
+  <div class="card">
+    <h2 id="formTitle">تسجيل جديد</h2>
+    <div class="fcol">
+    <label class="l">اليوم <span style="font-weight:500;color:var(--faint)">(العمالة بتتسجل تاني يوم، فبيبدأ من أمس)</span></label><input type="date" id="fDate">
+    <div class="seg" style="margin-top:6px"><button type="button" id="fYest">أمس</button><button type="button" id="fToday">النهارده</button></div>
+    <label class="l">المكتب (شركة العمالة)</label><select id="fCompany"></select>
+    <label class="l">الإدارة</label><select id="fDept"></select>
+    <label class="l">الوردية</label><div class="seg" id="fShift"></div>
+    <label class="l">نوع العمالة</label><div class="seg" id="fType"></div>
+    <label class="l">عدد العمالة</label>
+    <div class="stepper"><button type="button" data-step="count" data-d="-1">−</button><input type="number" inputmode="numeric" min="0" id="fCount" placeholder="0"><button type="button" data-step="count" data-d="1">+</button></div>
+    <label class="l">عدد ساعات العمل</label><div class="seg" id="fHours"></div>
+    <div id="otherBox" style="display:none">
+      <div class="grid2"><div><label class="l">الساعات</label><input type="number" inputmode="decimal" id="fHoursOther" placeholder="مثلاً 9"></div>
+      <div class="admin-only"><label class="l">تكلفة اليوم (ج)</label><input type="number" inputmode="decimal" id="fCostManual" placeholder="مثلاً 250"></div></div>
+      <p class="note" id="otherNote"></p>
+    </div>
+    <label class="l">عدد العمالة المتأخرة</label>
+    <div class="stepper"><button type="button" data-step="delayed" data-d="-1">−</button><input type="number" inputmode="numeric" min="0" id="fDelayed" placeholder="0"><button type="button" data-step="delayed" data-d="1">+</button></div>
+    <label class="l">ملاحظات</label><textarea id="fNotes" placeholder="اختياري"></textarea>
+    </div>
+    <div class="fside">
+    <div class="preview admin-only"><div><b id="pCost">—</b><span>تكلفة اليوم</span></div><div><b id="pTotal">—</b><span>الإجمالي</span></div><div><b id="pPen">—</b><span>الجزاء</span></div></div>
+    <div class="warnbox" id="formWarn"></div>
+    <button class="btn" id="btnSave">حفظ</button>
+    <div class="row2"><button class="btn sec" id="btnCopyLast">نسخ من آخر تسجيل</button><button class="btn sec" id="btnClear">مسح الحقول</button></div>
+    <button class="btn danger" id="btnCancelEdit" style="display:none">إلغاء التعديل</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ السجل ============ -->
+<section class="view" id="v-log">
+  <div class="card">
+    <div class="daynav"><button id="dPrev">›</button><input type="date" id="lDate"><button id="dNext">‹</button></div>
+    <label class="l">المكتب</label><select id="lCompany"></select>
+    <button class="btn sec" id="btnPullLog" style="margin-top:10px">🔄 تحديث من الشيت (تسجيلات الكل)</button>
+    <div class="ochips" id="lChips"></div>
+    <div class="kpis" style="margin-top:12px"><div class="kpi"><b id="lWorkers">0</b><span>عمالة اليوم</span></div><div class="kpi admin-only"><b id="lAmount">0</b><span>المبلغ (ج)</span></div></div>
+  </div>
+  <div class="card" style="margin-top:0"><div id="lList"></div></div>
+</section>
+
+<!-- ============ التقارير ============ -->
+<section class="view" id="v-rep">
+  <div class="card">
+    <div class="grid2"><div><label class="l">من</label><input type="date" id="rFrom"></div><div><label class="l">إلى</label><input type="date" id="rTo"></div></div>
+    <button class="btn sec" id="btnPullRep" style="margin-top:10px">🔄 تحديث من الشيت</button>
+    <div class="seg" style="margin-top:8px"><button type="button" data-q="month">الشهر ده</button><button type="button" data-q="prev">الشهر اللي فات</button><button type="button" data-q="w">آخر 7 أيام</button></div>
+    <label class="l">المكتب (للفاتورة اليومية)</label><select id="rCompany"></select>
+    <div class="kpis" style="margin-top:12px">
+      <div class="kpi"><b id="rWorkers">0</b><span>إجمالي العمالة</span></div><div class="kpi"><b id="rAmount">0</b><span>إجمالي المبلغ</span></div>
+      <div class="kpi"><b id="rPen">0</b><span>الجزاءات</span></div><div class="kpi"><b id="rNet">0</b><span>الصافي بعد الجزاء</span></div>
+    </div>
+    <p class="note" id="rWarn"></p>
+  </div>
+  <div class="card" style="margin-top:0"><h2>ملخص المكاتب</h2><div class="tscroll"><table id="tOff"></table></div></div>
+  <div class="card" style="margin-top:0"><h2>تقرير الإدارات</h2>
+    <p class="note" style="margin-top:0">كام عامل احتاجته كل إدارة وتكلفتهم، في الفترة (من/إلى) اللي فوق.</p>
+    <label class="l">الإدارة</label><select id="rDept"></select>
+    <div class="kpis" style="margin-top:12px">
+      <div class="kpi"><b id="dWorkers">0</b><span>إجمالي العمالة (عامل/يوم)</span></div><div class="kpi"><b id="dAvg">0</b><span>متوسط العمالة في اليوم</span></div>
+      <div class="kpi"><b id="dPeak">0</b><span id="dPeakL">أعلى يوم</span></div><div class="kpi"><b id="dCost">0</b><span>التكلفة (ج)</span></div>
+    </div>
+    <div class="tscroll" style="margin-top:12px"><table id="tDeptOff"></table></div>
+    <h3 style="margin:16px 0 6px;font-size:15px">كل الإدارات</h3><div class="tscroll"><table id="tDept"></table></div>
+  </div>
+  <div class="card invcard" style="margin-top:0"><div class="printhead" id="printHead"></div><h2 id="invTitle">فاتورة المكتب</h2><div class="tscroll"><table id="tInv"></table></div>
+    <div id="invSum" style="margin-top:10px;font-weight:800;font-size:14px"></div>
+    <div class="row2"><button class="btn sec" id="btnPrint">طباعة / حفظ PDF</button><button class="btn sec" id="btnCopyRep">نسخ كنص</button></div></div>
+</section>
+
+<!-- ============ التقييم ============ -->
+<section class="view" id="v-eval">
+  <div class="card">
+    <label class="l">الشهر</label><input type="month" id="eMonth">
+    <p class="sub" style="font-size:13px;margin:8px 0 0">دخّل تقييم كل مكتب للبنود اللي مطلوبة منك بس. القيمة بتتحفظ في الشيت لما تدوس «حفظ التقييم».</p>
+    <button class="btn" id="btnEvalSave" style="margin-top:10px">حفظ التقييم</button>
+  </div>
+  <div class="card" style="margin-top:0"><div id="eList" class="evgrid"></div></div>
+</section>
+
+<!-- ============ الإعدادات ============ -->
+<section class="view" id="v-set">
+  <div class="card"><h2>ربط الشيت</h2>
+    <div class="row2"><button class="btn sec" id="btnPing">اختبار الاتصال</button><button class="btn sec" id="btnSyncNow">ارسال المعلّق</button></div>
+    <div id="whoami" style="display:none"></div>
+    <button class="btn sec admin-only" id="btnPullLists">جلب القوائم والأسعار من الشيت</button>
+    <button class="btn danger" id="btnLogout">تسجيل الخروج من الجهاز</button>
+    <p class="note" id="syncNote"></p></div>
+  <div class="card admin-only" style="margin-top:0"><h2>القوائم</h2>
+    <div id="listsBox"></div></div>
+  <div class="card admin-only" style="margin-top:0"><h2>الأسعار والجزاء</h2>
+    <label class="l">المكتب</label><select id="sOffice"></select>
+    <p class="note" id="priceNote"></p>
+    <div id="officeColorBox" style="display:none"><label class="l">لون المكتب</label><input type="color" id="sColor" style="height:44px;padding:4px"></div>
+    <div id="ratesBox" style="margin-top:8px"></div>
+    <button class="btn sec" id="btnAddRate">+ سعر ساعات جديد</button>
+    <div class="grid2"><div><label class="l">أساس الجزاء (ج)</label><input type="number" id="sPenBase" inputmode="decimal"></div><div><label class="l">نسبة الجزاء</label><input type="number" id="sPenPct" step="0.05" inputmode="decimal"></div></div>
+    <p class="note">الجزاء = أساس الجزاء × النسبة × عدد العمالة المتأخرة.<br>أي تعديل هنا (قوائم أو أسعار أو جزاء) بيتبعت للشيت تلقائي، والشيت هو اللي بيحسب المبلغ النهائي.</p></div>
+  <div class="card" style="margin-top:0"><h2>نسخة احتياطية</h2>
+    <div class="row2"><button class="btn sec" id="btnBackup">حفظ نسخة (ملف)</button><button class="btn sec" id="btnRestore">استعادة من ملف</button></div>
+    <input type="file" id="fileRestore" accept=".json,application/json,text/plain" style="display:none">
+    <p class="note" id="bkNote"></p></div>
+</section>
+</div>
+
+<nav class="tabbar">
+  <button class="tab active" data-v="entry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span class="lb">تسجيل</span></button>
+  <button class="tab" data-v="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span class="lb">السجل</span></button>
+  <button class="tab admin-only" data-v="rep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span class="lb">التقارير</span></button>
+  <button class="tab evaltab" data-v="eval"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.2 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/></svg><span class="lb">التقييم</span></button>
+  <button class="tab" data-v="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="lb">الإعدادات</span></button>
+  <button class="tab exit" id="btnExit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg><span class="lb">خروج</span></button>
+</nav>
+
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="sheet"><h3 id="mTitle"></h3><p class="note" id="mBody" style="font-size:14px;color:var(--sub)"></p><div class="row2"><button class="btn sec" id="mNo">لا</button><button class="btn" id="mYes" style="margin-top:8px;padding:11px">تمام</button></div></div></div>
+
+<script>
+/* ================= الحالة والتخزين ================= */
+const LS_KEY='wl-data-v1';
+const DEF={
+  lists:{companies:[],depts:[],shifts:[],types:[]},
+  rates:{},penaltyBase:0,penaltyPct:0,officeRates:{},officePenalty:{},colors:{},url:'',code:'',by:''
+};
+let S={role:'',userName:'',evalGroups:[],sheetOnly:[],records:[],pendingDel:[],settings:JSON.parse(JSON.stringify(DEF)),lastForm:null};
+function load(){try{const v=localStorage.getItem(LS_KEY);if(v){const o=JSON.parse(v);S=Object.assign(S,o);S.settings=Object.assign(JSON.parse(JSON.stringify(DEF)),o.settings||{});S.settings.lists=Object.assign(JSON.parse(JSON.stringify(DEF.lists)),(o.settings||{}).lists||{});}}catch(e){}}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(S));return true}catch(e){toast('تعذّر الحفظ على الجهاز — المساحة ممتلئة؟');return false}}
+load();
+
+/* ================= أدوات ================= */
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const todayStr=()=>ymd(new Date());
+const addDays=(s,n)=>{const [y,m,d]=s.split('-').map(Number);return ymd(new Date(y,m-1,d+n))};
+const fmt=n=>(Math.round(n*100)/100).toLocaleString('en-US');
+const uid=()=>'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const AR_DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+function dayName(s){const [y,m,d]=s.split('-').map(Number);return AR_DAYS[new Date(y,m-1,d).getDay()]}
+let toastT;function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),2400)}
+function ask(title,body,yes,no){return new Promise(res=>{$('mTitle').textContent=title;$('mBody').textContent=body;$('mYes').textContent=yes||'تمام';$('mNo').textContent=no||'لا';$('modal').classList.add('show');
+  const done=v=>{$('modal').classList.remove('show');$('mYes').onclick=$('mNo').onclick=null;res(v)};$('mYes').onclick=()=>done(true);$('mNo').onclick=()=>done(false)})}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* الحسابات (نفس معادلات الشيت) */
+/* الأسعار: السعر العام + أسعار خاصة لكل مكتب (لو موجودة بتغلّب العام) */
+function ratesFor(co){return Object.assign({},S.settings.rates,(S.settings.officeRates||{})[co]||{})}
+function penFor(co){const o=(S.settings.officePenalty||{})[co];return {base:o?Number(o.base):S.settings.penaltyBase,pct:o?Number(o.pct):S.settings.penaltyPct}}
+function costFor(hours,co){const r=ratesFor(co)[hours];return r==null?null:Number(r)}
+function allHours(){const set={};Object.keys(S.settings.rates).forEach(h=>set[h]=1);Object.values(S.settings.officeRates||{}).forEach(o=>Object.keys(o).forEach(h=>set[h]=1));return Object.keys(set).map(Number).sort((a,b)=>a-b)}
+function recCost(r){const k=costFor(r.hours,r.company);if(k!=null)return k;return r.manualCost&&r.cost!=null?Number(r.cost):null}
+function recTotal(r){const c=recCost(r);return c==null?0:(Number(r.count)||0)*c}
+function recPen(r){const p=penFor(r.company);return (Number(r.delayed)||0)*p.base*p.pct}
+/* ألوان المكاتب */
+const PALETTE=['#D0112B','#2563A8','#14804A','#C0790C','#7C3AED','#0E7490','#BE185D','#65A30D','#EA580C','#475569'];
+function colorOf(co){const c=(S.settings.colors||{})[co];if(c)return c;let i=S.settings.lists.companies.indexOf(co);if(i<0){i=0;for(const ch of String(co))i+=ch.charCodeAt(0)}return PALETTE[i%PALETTE.length]}
+
+/* ================= الصلاحيات =================
+   الصلاحية الحقيقية بيفرضها السكربت في جوجل (حسب الكود). التطبيق هنا بيخفي اللي مش مسموح بس. */
+function needLogin(){return !S.settings.url||!S.settings.code||!S.role}
+function isAdmin(){return S.role==='admin'}
+function canEval(){return !needLogin()&&(isAdmin()||(S.evalGroups||[]).length>0)}
+function canEdit(r){return !/^r#/.test(r.id)&&(isAdmin()||!r.by||r.by===S.userName)}
+function applyRole(){
+  document.body.classList.toggle('role-user',!isAdmin());
+  document.body.classList.toggle('locked',needLogin());
+  document.body.classList.toggle('no-eval',!canEval());
+  if(!canEval()&&$('v-eval').classList.contains('active'))show('entry');
+  if(needLogin()){$('gUrl').value=$('gUrl').value||S.settings.url||''}
+  const connected=!!S.settings.url&&!needLogin();
+  $('hSub').textContent=(F&&F.date?dayName(F.date)+' — '+F.date.split('-').reverse().join('/'):'')+(connected&&S.userName?' · '+S.userName+(isAdmin()?' (مدير)':''):'');
+  const w=$('whoami');if(connected&&S.userName){w.style.display='block';w.textContent='مسجّل دخول: '+S.userName+' — '+(isAdmin()?'مدير (كل الصلاحيات)':'مستخدم (تسجيل العمالة فقط)')}else w.style.display='none';
+  if(!isAdmin()&&($('v-rep').classList.contains('active'))){show('entry')}
+}
+/* ================= التنقل ================= */
+function show(v){document.querySelectorAll('.view').forEach(e=>e.classList.toggle('active',e.id==='v-'+v));
+  document.querySelectorAll('.tab[data-v]').forEach(t=>t.classList.toggle('active',t.dataset.v===v));window.scrollTo(0,0);
+  if(v==='log'){renderLog();autoPull()}if(v==='rep'){renderRep();autoPull()}if(v==='set')renderSettings();if(v==='eval')renderEval();}
+document.querySelectorAll('.tab[data-v]').forEach(t=>t.onclick=()=>show(t.dataset.v));
+$('btnExit').onclick=()=>{window.close();setTimeout(()=>toast('اقفل التطبيق من زر الرجوع أو من الشاشة الرئيسية'),300)};
+$('btnTheme').onclick=()=>{const d=document.documentElement.classList.toggle('dark');try{localStorage.setItem('wl-theme',d?'dark':'light')}catch(e){}
+  $('metaTheme').setAttribute('content',d?'#220B12':'#4F0F20')};
+
+/* ================= نموذج التسجيل ================= */
+const yesterday=()=>addDays(todayStr(),-1);
+const F={date:yesterday(),company:'',dept:'',shift:'',type:'',count:'',hours:8,delayed:'',notes:'',editing:null};
+function fillSelect(sel,arr,cur,ph){sel.innerHTML=(ph?'<option value="">'+ph+'</option>':'')+arr.map(x=>'<option'+(x===cur?' selected':'')+'>'+esc(x)+'</option>').join('')}
+function renderSeg(el,arr,cur,on){el.innerHTML=arr.map(x=>'<button type="button" class="'+(String(x)===String(cur)?'on':'')+'" data-v="'+esc(x)+'">'+esc(x)+'</button>').join('');
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>on(b.dataset.v))}
+function hoursOptions(co){if(!isAdmin())return (S.settings.userHours||[]).slice();return Object.keys(ratesFor(co||'')).map(Number).sort((a,b)=>a-b)}
+function renderForm(){
+  const L=S.settings.lists;
+  if(!F.company&&L.companies.length)F.company='';
+  fillSelect($('fCompany'),L.companies,F.company,'اختر المكتب');
+  fillSelect($('fDept'),L.depts,F.dept,'اختر الإدارة');
+  if(!F.shift)F.shift=L.shifts[0]||'';if(!F.type)F.type=L.types[0]||'';
+  renderSeg($('fShift'),L.shifts,F.shift,v=>{F.shift=v;renderForm()});
+  renderSeg($('fType'),L.types,F.type,v=>{F.type=v;renderForm()});
+  const hs=hoursOptions(F.company);
+  if(F.hours!=='other'&&hs.indexOf(F.hours)<0)F.hours=hs[0]||'other';
+  $('fHours').innerHTML=hs.map(h=>'<button type="button" class="'+(F.hours===h?'on':'')+'" data-h="'+h+'">'+h+' س</button>').join('')+'<button type="button" class="'+(F.hours==='other'?'on':'')+'" data-h="other">أخرى</button>';
+  $('fHours').querySelectorAll('button').forEach(b=>b.onclick=()=>{F.hours=b.dataset.h==='other'?'other':Number(b.dataset.h);renderForm()});
+  $('otherBox').style.display=F.hours==='other'?'block':'none';
+  $('fDate').value=F.date;$('fCount').value=F.count;$('fDelayed').value=F.delayed;$('fNotes').value=F.notes;
+  $('formTitle').textContent=F.editing?'تعديل تسجيل':'تسجيل جديد';
+  $('btnSave').textContent=F.editing?'حفظ التعديل':'حفظ';
+  $('btnCancelEdit').style.display=F.editing?'block':'none';
+  applyRole();
+  updatePreview();
+}
+function formHours(){if(F.hours!=='other')return F.hours;const v=parseFloat($('fHoursOther').value);return isNaN(v)?null:v}
+function updatePreview(){
+  const h=formHours(),n=Number($('fCount').value)||0,d=Number($('fDelayed').value)||0;
+  let cost=null;
+  const co=$('fCompany').value,pf=penFor(co);
+  if(F.hours!=='other')cost=costFor(h,co);
+  else{const known=h!=null?costFor(h,co):null;cost=known!=null?known:($('fCostManual').value===''?null:Number($('fCostManual').value));
+    $('otherNote').textContent=!isAdmin()?'ساعات غير معتادة: المدير هيحدد التكلفة بعد كده.':known!=null?'الساعات دي ليها سعر في القائمة ('+known+' ج).':'ساعات غير معتادة: اكتب تكلفة اليوم بنفسك.'}
+  $('pCost').textContent=cost==null?'—':fmt(cost);
+  $('pTotal').textContent=cost==null?'—':fmt(n*cost);
+  $('pPen').textContent=fmt(d*pf.base*pf.pct);
+}
+function readForm(){F.date=$('fDate').value;F.company=$('fCompany').value;F.dept=$('fDept').value;F.count=$('fCount').value;F.delayed=$('fDelayed').value;F.notes=$('fNotes').value}
+['fDate','fCompany','fDept','fCount','fDelayed','fNotes','fHoursOther','fCostManual'].forEach(id=>$(id).addEventListener('input',()=>{readForm();updatePreview();if(id==='fDate')applyRole();$('formWarn').style.display='none'}));
+$('fCompany').addEventListener('change',()=>{readForm();renderForm()});
+document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{const el=$(b.dataset.step==='count'?'fCount':'fDelayed');el.value=Math.max(0,(Number(el.value)||0)+Number(b.dataset.d));readForm();updatePreview()});
+
+function buildRecord(){
+  readForm();const h=formHours();
+  if(!F.date)return 'اختار اليوم';
+  if(!F.company)return 'اختار المكتب';
+  if(!F.dept)return 'اختار الإدارة';
+  const n=Number(F.count);if(!(n>0)||n!==Math.floor(n))return 'اكتب عدد العمالة (رقم صحيح أكبر من صفر)';
+  if(h==null||!(h>0)||h>24)return 'اكتب عدد الساعات صح';
+  const d=Number(F.delayed)||0;if(d<0||d>n||d!==Math.floor(d))return 'عدد المتأخرين لازم يكون من صفر لحد عدد العمالة';
+  const known=costFor(h,F.company)!=null;let manual=false,cost=null;
+  if(!known&&isAdmin()){const c=$('fCostManual').value;if(c===''||isNaN(c)||Number(c)<0)return 'الساعات دي مالهاش سعر — اكتب تكلفة اليوم';manual=true;cost=Number(c)}
+  return {id:F.editing||uid(),date:F.date,type:F.type,shift:F.shift,dept:F.dept,company:F.company,count:n,hours:h,delayed:d,notes:F.notes.trim(),manualCost:manual,cost:cost,synced:false,ts:Date.now(),by:S.userName||''};
+}
+$('fYest').onclick=()=>{readForm();F.date=yesterday();renderForm()};$('fToday').onclick=()=>{readForm();F.date=todayStr();renderForm()};
+$('btnSave').onclick=async()=>{
+  const r=buildRecord();if(typeof r==='string'){const w=$('formWarn');w.textContent=r;w.style.display='block';return}
+  const dup=S.records.find(x=>x.id!==r.id&&x.date===r.date&&x.company===r.company&&x.dept===r.dept&&x.shift===r.shift&&x.type===r.type&&x.hours===r.hours);
+  if(dup){const ok=await ask('تسجيل مشابه موجود','في تسجيل بنفس اليوم والمكتب والإدارة والوردية والساعات (عدد '+dup.count+'). تسجّل ده برضه؟','سجّل برضه','لا، راجع');if(!ok)return}
+  const i=S.records.findIndex(x=>x.id===r.id);if(i>=0)S.records[i]=r;else S.records.push(r);
+  S.lastForm={company:r.company,dept:r.dept,shift:r.shift,type:r.type,hours:r.manualCost?'other':r.hours,count:r.count};
+  if(!save())return;
+  const wasEdit=!!F.editing;
+  F.editing=null;F.count='';F.delayed='';F.notes='';$('fHoursOther').value='';$('fCostManual').value='';
+  if(costFor(r.hours,r.company)==null)F.hours=hoursOptions(r.company)[0]||8;
+  renderForm();toast(wasEdit?'اتحفظ التعديل ✓':'اتسجّل ✓ — '+r.company+' / '+r.dept+' / '+r.count+' عامل');
+  updateSyncPill();sync();
+};
+$('btnCopyLast').onclick=()=>{const l=S.lastForm;if(!l)return toast('مفيش تسجيل سابق');
+  F.company=l.company;F.dept=l.dept;F.shift=l.shift;F.type=l.type;F.hours=(l.hours==='other'||costFor(l.hours,l.company)==null)?hoursOptions(l.company)[0]||8:l.hours;F.count=l.count;renderForm();toast('اتنسخت بيانات آخر تسجيل — راجع العدد')};
+$('btnClear').onclick=()=>{F.count='';F.delayed='';F.notes='';F.company='';F.dept='';F.editing=null;$('fHoursOther').value='';$('fCostManual').value='';renderForm()};
+$('btnCancelEdit').onclick=()=>{F.editing=null;F.count='';F.delayed='';F.notes='';renderForm()};
+
+function editRecord(id){const r=S.records.find(x=>x.id===id);if(!r)return;
+  Object.assign(F,{date:r.date,company:r.company,dept:r.dept,shift:r.shift,type:r.type,count:r.count,delayed:r.delayed||'',notes:r.notes||'',editing:id});
+  if(r.manualCost){F.hours='other';$('fHoursOther').value=r.hours;$('fCostManual').value=r.cost}else{F.hours=r.hours;}
+  show('entry');renderForm();}
+
+/* ================= السجل ================= */
+function renderLog(){
+  const d=$('lDate').value||yesterday();$('lDate').value=d;
+  fillSelect($('lCompany'),S.settings.lists.companies,$('lCompany').value,'كل المكاتب');
+  const co=$('lCompany').value;
+  const seen={},dayAll=allRecs().filter(r=>r.date===d&&!seen[r.id]&&(seen[r.id]=1));
+  const list=dayAll.filter(r=>!co||r.company===co).sort((a,b)=>(a.ts||0)-(b.ts||0));
+  $('lWorkers').textContent=list.reduce((s,r)=>s+(Number(r.count)||0),0);$('lAmount').textContent=fmt(list.reduce((s,r)=>s+recTotal(r),0));
+  $('lChips').innerHTML=S.settings.lists.companies.map(c=>{const n=dayAll.filter(r=>r.company===c).reduce((s,r)=>s+(Number(r.count)||0),0);const col=colorOf(c);
+    return '<span class="ochip'+(n?'':' zero')+(co===c?' on':'')+'" data-co="'+esc(c)+'" style="border-color:'+col+';color:'+col+'">'+esc(c)+' · '+(n||'لا يوجد')+'</span>'}).join('');
+  $('lChips').querySelectorAll('.ochip').forEach(e=>e.onclick=()=>{$('lCompany').value=$('lCompany').value===e.dataset.co?'':e.dataset.co;renderLog()});
+  $('lList').innerHTML=list.length?list.map(r=>{const ed=canEdit(r);return '<div class="rec" data-id="'+esc(r.id)+'" style="border-right:6px solid '+colorOf(r.company)+';background:color-mix(in srgb,'+colorOf(r.company)+' 10%,var(--field))"><div class="top"><span style="color:'+colorOf(r.company)+'">● '+esc(r.company)+'</span><span>'+r.count+' عامل × '+r.hours+' س</span></div>'+
+    '<div class="mid">'+esc(r.dept)+' · '+esc(r.shift)+' · '+esc(r.type)+(r.delayed?' · متأخر '+r.delayed:'')+(r.notes?' · '+esc(r.notes):'')+'</div>'+
+    '<div class="bot"><span>'+(isAdmin()?'<b>'+(recCost(r)==null?'تكلفة ناقصة':fmt(recTotal(r))+' ج')+'</b>'+(r.delayed?' <span style="color:var(--accent)">جزاء '+fmt(recPen(r))+'</span>':''):'')+(r.by?' <span style="color:var(--faint);font-size:12px">· '+esc(r.by)+'</span>':'')+'</span>'+
+    '<span>'+(ed?'<span class="tag '+(r.synced&&!r.conflict?'ok':'wait')+'">'+(r.conflict?'مكرر — محتاج قرار':r.synced?'في الشيت':'معلّق')+'</span> <button class="btn small danger" data-del="'+esc(r.id)+'" style="margin-right:6px">مسح</button>':'<span class="ro">للاطلاع فقط</span>')+'</span></div></div>'}).join(''):'<div class="empty">مفيش تسجيلات في اليوم ده</div>';
+  $('lList').querySelectorAll('.rec').forEach(e=>e.onclick=ev=>{if(ev.target.dataset.del)return;const r=S.records.find(x=>x.id===e.dataset.id);if(r&&canEdit(r))editRecord(e.dataset.id)});
+  $('lList').querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{
+    const r=S.records.find(x=>x.id===b.dataset.del);if(!r)return;
+    if(await ask('مسح التسجيل؟',r.company+' — '+r.dept+' — '+r.count+' عامل. هيتمسح من الشيت كمان.','امسح','لا')){
+      S.records=S.records.filter(x=>x.id!==r.id);if(r.synced||S.pendingDel.indexOf(r.id)<0)S.pendingDel.push(r.id);
+      save();renderLog();updateSyncPill();sync();toast('اتمسح')}});
+}
+$('lDate').onchange=()=>{renderLog();autoPull()};$('lCompany').onchange=renderLog;
+$('dPrev').onclick=()=>{$('lDate').value=addDays($('lDate').value||yesterday(),-1);renderLog();autoPull()};
+$('dNext').onclick=()=>{$('lDate').value=addDays($('lDate').value||yesterday(),1);renderLog();autoPull()};
+
+/* ================= التقارير ================= */
+function allRecs(){return S.records.concat(S.sheetOnly||[])}
+function rangeRecs(a,b){return allRecs().filter(r=>r.date>=a&&r.date<=b)}
+function rangeLabel(a,b){const f=x=>x.split('-').reverse().join('/');return f(a)+' ← '+f(b)}
+function renderRep(){
+  if(!$('rFrom').value||!$('rTo').value){const t=todayStr();$('rFrom').value=t.slice(0,8)+'01';$('rTo').value=t}
+  let a=$('rFrom').value,z=$('rTo').value;if(a>z){const t=a;a=z;z=t;$('rFrom').value=a;$('rTo').value=z}
+  fillSelect($('rCompany'),S.settings.lists.companies,$('rCompany').value||S.settings.lists.companies[0]);
+  const co=$('rCompany').value,rs=rangeRecs(a,z);const m=rangeLabel(a,z);
+  const tw=rs.reduce((s,r)=>s+r.count,0),ta=rs.reduce((s,r)=>s+recTotal(r),0),tp=rs.reduce((s,r)=>s+recPen(r),0);
+  $('rWorkers').textContent=tw;$('rAmount').textContent=fmt(ta);$('rPen').textContent=fmt(tp);$('rNet').textContent=fmt(ta-tp);
+  const missing=rs.filter(r=>recCost(r)==null).length;$('rWarn').textContent=missing?'⚠ '+missing+' تسجيل تكلفته ناقصة وغير محسوبة في المبلغ.':'';
+  const rows=S.settings.lists.companies.map(c=>{const x=rs.filter(r=>r.company===c);return {c,m:x.filter(r=>r.shift==='صباحية').reduce((s,r)=>s+r.count,0),e:x.filter(r=>r.shift==='مسائية').reduce((s,r)=>s+r.count,0),w:x.reduce((s,r)=>s+r.count,0),a:x.reduce((s,r)=>s+recTotal(r),0),p:x.reduce((s,r)=>s+recPen(r),0)}});
+  $('tOff').innerHTML='<thead><tr><th>المكتب</th><th>صباحي</th><th>مسائي</th><th>الإجمالي</th><th>المبلغ</th><th>جزاء</th></tr></thead><tbody>'+
+    rows.map(r=>'<tr><td class="n" style="color:'+colorOf(r.c)+'">● '+esc(r.c)+'</td><td>'+r.m+'</td><td>'+r.e+'</td><td>'+r.w+'</td><td>'+fmt(r.a)+'</td><td>'+fmt(r.p)+'</td></tr>').join('')+'</tbody><tfoot><tr><td class="n">الإجمالي</td><td>'+rows.reduce((s,r)=>s+r.m,0)+'</td><td>'+rows.reduce((s,r)=>s+r.e,0)+'</td><td>'+tw+'</td><td>'+fmt(ta)+'</td><td>'+fmt(tp)+'</td></tr></tfoot>';
+  renderDept(rs,a,z);
+  // الفاتورة اليومية
+  const hs=allHours(),mine=rs.filter(r=>r.company===co);
+  const days=[...new Set(mine.map(r=>r.date))].sort();
+  $('invTitle').textContent='فاتورة '+co+' — '+m;
+  const cols=hs.concat(['other']);
+  const inv=days.map(dt=>{const x=mine.filter(r=>r.date===dt);const o={dt,w:{},t:x.reduce((s,r)=>s+r.count,0),a:x.reduce((s,r)=>s+recTotal(r),0),p:x.reduce((s,r)=>s+recPen(r),0)};
+    cols.forEach(h=>o.w[h]=x.filter(r=>h==='other'?hs.indexOf(Number(r.hours))<0:Number(r.hours)===h).reduce((s,r)=>s+r.count,0));return o});
+  $('tInv').innerHTML='<thead><tr><th>اليوم</th>'+cols.map(h=>'<th>'+(h==='other'?'أخرى':h+'س')+'</th>').join('')+'<th>إجمالي</th><th>المبلغ</th><th>جزاء</th></tr></thead><tbody>'+
+    (inv.length?inv.map(o=>'<tr><td class="n">'+o.dt.slice(8)+'/'+o.dt.slice(5,7)+'</td>'+cols.map(h=>'<td>'+(o.w[h]||'')+'</td>').join('')+'<td>'+o.t+'</td><td>'+fmt(o.a)+'</td><td>'+(o.p?fmt(o.p):'')+'</td></tr>').join(''):'<tr><td colspan="'+(cols.length+4)+'" class="empty">مفيش بيانات للمكتب ده في الشهر ده</td></tr>')+
+    '</tbody><tfoot><tr><td class="n">الإجمالي</td>'+cols.map(h=>'<td>'+inv.reduce((s,o)=>s+(o.w[h]||0),0)+'</td>').join('')+'<td>'+inv.reduce((s,o)=>s+o.t,0)+'</td><td>'+fmt(inv.reduce((s,o)=>s+o.a,0))+'</td><td>'+fmt(inv.reduce((s,o)=>s+o.p,0))+'</td></tr></tfoot>';
+  const ia=inv.reduce((s,o)=>s+o.a,0),ip=inv.reduce((s,o)=>s+o.p,0),iw=inv.reduce((s,o)=>s+o.t,0);
+  $('invSum').textContent='الإجمالي '+fmt(ia)+' ج − الجزاءات '+fmt(ip)+' ج = الصافي '+fmt(ia-ip)+' ج';
+  $('printHead').innerHTML='<h2>فاتورة عمالة — '+esc(co)+'</h2><div>الفترة: '+esc(m)+' · إجمالي العمالة: '+iw+'</div>';
+  window._invText=co+' — '+m+'\n'+inv.map(o=>o.dt+': '+o.t+' عامل = '+fmt(o.a)+(o.p?' (جزاء '+fmt(o.p)+')':'')).join('\n')+'\nالإجمالي: '+inv.reduce((s,o)=>s+o.t,0)+' عامل = '+fmt(inv.reduce((s,o)=>s+o.a,0))+' ج، جزاءات '+fmt(inv.reduce((s,o)=>s+o.p,0))+' ج';
+}
+
+function renderDept(rs,a,z){
+  const names=S.settings.lists.depts.slice();rs.forEach(r=>{const d=r.dept||'(بدون إدارة)';if(names.indexOf(d)<0)names.push(d)});
+  const cur=$('rDept').value;$('rDept').innerHTML='<option value="">كل الإدارات</option>'+names.map(x=>'<option'+(x===cur?' selected':'')+'>'+esc(x)+'</option>').join('');
+  const dn=r=>r.dept||'(بدون إدارة)';
+  const nd=Math.round((Date.parse(z)-Date.parse(a))/864e5)+1;
+  const stat=x=>{const byDay={};x.forEach(r=>byDay[r.date]=(byDay[r.date]||0)+(Number(r.count)||0));const days=Object.keys(byDay);
+    let pk=0,pd='';days.forEach(d=>{if(byDay[d]>pk){pk=byDay[d];pd=d}});
+    const w=x.reduce((s,r)=>s+(Number(r.count)||0),0);
+    return {w,days:days.length,avg:days.length?w/days.length:0,pk,pd,a:x.reduce((s,r)=>s+recTotal(r),0),p:x.reduce((s,r)=>s+recPen(r),0)}};
+  const sel=$('rDept').value,x=sel?rs.filter(r=>dn(r)===sel):rs,st=stat(x);
+  $('dWorkers').textContent=st.w;$('dAvg').textContent=(Math.round(st.avg*10)/10).toString();$('dPeak').textContent=st.pk;
+  $('dPeakL').textContent=st.pd?'أعلى يوم ('+st.pd.slice(8)+'/'+st.pd.slice(5,7)+')':'أعلى يوم';
+  $('dCost').textContent=fmt(st.a);
+  const offs=S.settings.lists.companies.slice();x.forEach(r=>{if(offs.indexOf(r.company)<0)offs.push(r.company)});
+  const orows=offs.map(c=>{const q=x.filter(r=>r.company===c);return {c,s:stat(q)}}).filter(o=>o.s.w>0);
+  $('tDeptOff').innerHTML='<thead><tr><th>'+(sel?esc(sel)+' — ':'')+'المكتب</th><th>العمالة</th><th>أيام</th><th>متوسط/يوم</th><th>التكلفة</th></tr></thead><tbody>'+
+    (orows.length?orows.map(o=>'<tr><td class="n" style="color:'+colorOf(o.c)+'">● '+esc(o.c)+'</td><td>'+o.s.w+'</td><td>'+o.s.days+'</td><td>'+Math.round(o.s.avg*10)/10+'</td><td>'+fmt(o.s.a)+'</td></tr>').join(''):'<tr><td colspan="5" class="empty">مفيش بيانات في الفترة دي</td></tr>')+'</tbody>';
+  const drows=names.map(d=>({d,s:stat(rs.filter(r=>dn(r)===d))})).filter(o=>o.s.w>0).sort((p,q)=>q.s.w-p.s.w);
+  $('tDept').innerHTML='<thead><tr><th>الإدارة</th><th>العمالة</th><th>أيام</th><th>متوسط/يوم</th><th>أعلى يوم</th><th>التكلفة</th></tr></thead><tbody>'+
+    (drows.length?drows.map(o=>'<tr data-d="'+esc(o.d)+'" style="cursor:pointer"><td class="n">'+esc(o.d)+'</td><td>'+o.s.w+'</td><td>'+o.s.days+'</td><td>'+Math.round(o.s.avg*10)/10+'</td><td>'+o.s.pk+'</td><td>'+fmt(o.s.a)+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">مفيش بيانات</td></tr>')+
+    '</tbody><tfoot><tr><td class="n">الإجمالي</td><td>'+drows.reduce((q,o)=>q+o.s.w,0)+'</td><td></td><td></td><td></td><td>'+fmt(drows.reduce((q,o)=>q+o.s.a,0))+'</td></tr></tfoot>';
+  $('tDept').querySelectorAll('tr[data-d]').forEach(t=>t.onclick=()=>{$('rDept').value=t.dataset.d;renderRep()});
+}
+$('rDept').onchange=renderRep;
+$('rFrom').onchange=()=>{if($('rTo').value&&$('rFrom').value>$('rTo').value)$('rTo').value=$('rFrom').value;renderRep();autoPull()};$('rTo').onchange=()=>{if($('rFrom').value&&$('rTo').value<$('rFrom').value)$('rFrom').value=$('rTo').value;renderRep();autoPull()};
+document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{const n=new Date(),y=n.getFullYear(),mo=n.getMonth(),q=b.dataset.q;
+  if(q==='month'){$('rFrom').value=ymd(new Date(y,mo,1));$('rTo').value=todayStr()}
+  else if(q==='prev'){$('rFrom').value=ymd(new Date(y,mo-1,1));$('rTo').value=ymd(new Date(y,mo,0))}
+  else{$('rFrom').value=addDays(todayStr(),-6);$('rTo').value=todayStr()}renderRep();autoPull()});$('rCompany').onchange=renderRep;
+$('btnPrint').onclick=()=>{renderRep();window.print()};
+$('btnCopyRep').onclick=async()=>{try{await navigator.clipboard.writeText(window._invText||'');toast('اتنسخت ✓')}catch(e){toast('النسخ مش متاح في المتصفح ده')}};
+
+/* ================= الإعدادات ================= */
+const LIST_NAMES={companies:'المكاتب (شركات العمالة)',depts:'الإدارات',shifts:'الورديات',types:'أنواع العمالة'};
+function renderSettings(){
+  const s=S.settings;
+  $('listsBox').innerHTML=Object.keys(LIST_NAMES).map(k=>'<label class="l">'+LIST_NAMES[k]+'</label><div class="chips">'+s.lists[k].map((x,i)=>'<span class="chip">'+esc(x)+'<button data-rm="'+k+'|'+i+'">×</button></span>').join('')+'</div><div class="addrow"><input data-add="'+k+'" placeholder="إضافة"><button class="btn small" data-addb="'+k+'">+</button></div>').join('');
+  $('listsBox').querySelectorAll('[data-rm]').forEach(b=>b.onclick=async()=>{const [k,i]=b.dataset.rm.split('|');const v=s.lists[k][i];
+    if(await ask('حذف من القائمة؟','"'+v+'" هيتشال من الاختيارات بس. التسجيلات القديمة تفضل زي ما هي.','احذف','لا')){s.lists[k].splice(i,1);touchPricing();renderSettings();renderForm()}});
+  $('listsBox').querySelectorAll('[data-add]').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('listsBox').querySelector('[data-addb="'+i.dataset.add+'"]').click()}}));
+  $('listsBox').querySelectorAll('[data-addb]').forEach(b=>b.onclick=()=>{const k=b.dataset.addb,inp=$('listsBox').querySelector('[data-add="'+k+'"]'),v=inp.value.trim();
+    if(!v)return;if(s.lists[k].indexOf(v)>=0)return toast('موجود قبل كده');s.lists[k].push(v);touchPricing();renderSettings();renderForm()});
+  renderPricing();
+  $('syncNote').textContent=s.url?'مربوط بالشيت. التسجيلات بتتبعت تلقائي، ولو النت قاطع بتستنى وتتبعت بعدين.':'الصق رابط الـ Web App وكود الأمان عشان التسجيلات تروح للشيت.';
+}
+let curOffice='';
+function renderPricing(){
+  const s=S.settings;fillSelect($('sOffice'),s.lists.companies,curOffice,'عام (كل المكاتب)');curOffice=$('sOffice').value;
+  const co=curOffice,ov=(s.officeRates[co]||{});
+  const hrs=Object.keys(co?Object.assign({},s.rates,ov):s.rates).map(Number).sort((a,b)=>a-b);
+  $('priceNote').textContent=co?'اللي تسيبه فاضي بياخد السعر العام. اللي تكتبه هنا يخص '+co+' بس.':'ده السعر العام لكل المكاتب اللي مالهاش سعر خاص.';
+  $('officeColorBox').style.display=co?'block':'none';if(co)$('sColor').value=colorOf(co);
+  $('ratesBox').innerHTML='<div class="ratesrow" style="font-size:12px;color:var(--sub);font-weight:700"><span>الساعات</span><span>تكلفة اليوم (ج)</span><span></span></div>'+hrs.map(h=>'<div class="ratesrow"><input value="'+h+'" disabled><input type="number" inputmode="decimal" data-rate="'+h+'" value="'+(co?(ov[h]!=null?ov[h]:''):s.rates[h])+'" placeholder="'+(co&&s.rates[h]!=null?s.rates[h]+' (عام)':'')+'"><button class="btn small danger" data-rrm="'+h+'" style="padding:0">×</button></div>').join('');
+  $('ratesBox').querySelectorAll('[data-rate]').forEach(i=>i.oninput=()=>{const h=i.dataset.rate;
+    if(co){if(i.value===''){if(s.officeRates[co]){delete s.officeRates[co][h];if(!Object.keys(s.officeRates[co]).length)delete s.officeRates[co]}}else if(Number(i.value)>=0){(s.officeRates[co]=s.officeRates[co]||{})[h]=Number(i.value)}}
+    else if(i.value!==''&&Number(i.value)>=0)s.rates[h]=Number(i.value);touchPricing();renderForm()});
+  $('ratesBox').querySelectorAll('[data-rrm]').forEach(b=>b.onclick=()=>{const h=b.dataset.rrm;
+    if(co){if(s.officeRates[co]){delete s.officeRates[co][h];if(!Object.keys(s.officeRates[co]).length)delete s.officeRates[co]}}else delete s.rates[h];touchPricing();renderPricing();renderForm()});
+  const po=s.officePenalty[co];
+  $('sPenBase').value=co?(po?po.base:''):s.penaltyBase;$('sPenPct').value=co?(po?po.pct:''):s.penaltyPct;
+  $('sPenBase').placeholder=co?s.penaltyBase+' (عام)':'';$('sPenPct').placeholder=co?s.penaltyPct+' (عام)':'';
+}
+$('sOffice').onchange=()=>{curOffice=$('sOffice').value;renderPricing()};
+$('sColor').oninput=()=>{if(curOffice){S.settings.colors[curOffice]=$('sColor').value;save()}};
+function penInput(){const s=S.settings,b=$('sPenBase').value,p=$('sPenPct').value;
+  if(!curOffice){if(b!==''&&Number(b)>=0)s.penaltyBase=Number(b);if(p!==''&&Number(p)>=0)s.penaltyPct=Number(p)}
+  else if(b===''&&p==='')delete s.officePenalty[curOffice];
+  else s.officePenalty[curOffice]={base:b!==''&&Number(b)>=0?Number(b):s.penaltyBase,pct:p!==''&&Number(p)>=0?Number(p):s.penaltyPct};
+  touchPricing();updatePreview()}
+$('sPenBase').oninput=penInput;$('sPenPct').oninput=penInput;
+$('btnAddRate').onclick=()=>{const h=parseFloat(prompt('عدد الساعات الجديد (مثلاً 9):')||'');if(isNaN(h)||h<=0)return;const c=parseFloat(prompt('تكلفة اليوم لـ '+h+' ساعات (ج):'+(curOffice?' — '+curOffice:''))||'');if(isNaN(c)||c<0)return;
+  if(curOffice)(S.settings.officeRates[curOffice]=S.settings.officeRates[curOffice]||{})[h]=c;else S.settings.rates[h]=c;touchPricing();renderPricing();renderForm()};
+
+/* ================= المزامنة مع الشيت ================= */
+let syncing=false,pTimer;
+function touchPricing(){S.pricingDirty=true;S.pricingVer=(S.pricingVer||0)+1;save();updateSyncPill();clearTimeout(pTimer);pTimer=setTimeout(()=>sync(),1500)}
+function pricingPayload(){const s=S.settings;return {lists:s.lists,rates:s.rates,officeRates:s.officeRates,officePenalty:s.officePenalty,penaltyBase:s.penaltyBase,penaltyPct:s.penaltyPct}}
+async function post(payload){
+  const s=S.settings;if(!s.url||!s.code)throw new Error('الرابط أو الكود ناقص');
+  const res=await fetch(s.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({code:s.code},payload))});
+  const j=await res.json();
+  if(j.evalGroups&&JSON.stringify(j.evalGroups)!==JSON.stringify(S.evalGroups||[])){S.evalGroups=j.evalGroups;save();applyRole()}
+  if(j.role&&(j.role!==S.role||j.user!==S.userName)){S.role=j.role;S.userName=j.user||'';save();applyRole();renderForm()}
+  if(!j.ok)throw new Error(j.error||'رد غير معروف');return j;
+}
+function conflictRecs(){return S.records.filter(r=>r.conflict)}
+function pendingCount(){return S.records.filter(r=>!r.synced&&!r.conflict).length+S.pendingDel.length+(S.pricingDirty&&isAdmin()?1:0)}
+function updateSyncPill(){const s=S.settings,p=pendingCount();
+  $('syncTxt').textContent=conflictRecs().length?'⚠ '+conflictRecs().length+' تسجيل مكرر محتاج قرارك — اضغط':needLogin()?'سجّل دخولك':p?('⏳ '+p+' في الانتظار — اضغط للإرسال'):'✓ كل التسجيلات في الشيت'}
+$('syncPill').onclick=()=>{if(conflictRecs().length){resolveConflicts();return}if(needLogin())return;sync(true)};
+function payloadRec(r){return {id:r.id,date:r.date,type:r.type,shift:r.shift,dept:r.dept,company:r.company,count:r.count,hours:r.hours,delayed:r.delayed||0,notes:r.notes||'',manualCost:!!r.manualCost,cost:r.manualCost?r.cost:null,force:r.force?true:undefined}}
+async function sync(manual){
+  if(syncing||!S.settings.url||!S.settings.code){if(manual&&!S.settings.url)toast('اربط الشيت من الإعدادات');return}
+  if(!pendingCount()){if(manual)toast('مفيش حاجة معلّقة');return}
+  if(!S.records.some(r=>!r.synced&&!r.conflict)&&!S.pendingDel.length&&!(S.pricingDirty&&isAdmin())){return}
+  syncing=true;$('syncTxt').textContent='⏳ جاري الإرسال…';
+  if(S.pricingDirty&&isAdmin()){const v=S.pricingVer;try{await post({setPricing:1,pricing:pricingPayload()});if(S.pricingVer===v)S.pricingDirty=false;save()}
+    catch(e){toast('الأسعار/القوائم ماتبعتتش للشيت: '+(e.message||e))}}
+  try{
+    for(;;){
+      const recs=S.records.filter(r=>!r.synced&&!r.conflict).slice(0,40),dels=S.pendingDel.slice(0,40);
+      if(!recs.length&&!dels.length)break;
+      const sentVer=recs.map(r=>r.ts);
+      const rr=await post({records:recs.map(payloadRec).concat(dels.map(id=>({id,deleted:true})))});
+      recs.forEach((r,i)=>{if(r.ts===sentVer[i])r.synced=true});
+      (rr.duplicates||[]).forEach(d=>{const r=S.records.find(x=>x.id===d.id);if(r){r.synced=false;r.conflict={count:d.count,by:d.by}}});save();
+      if(rr.deniedIds&&rr.deniedIds.length){toast('مش مسموح تعدّل أو تمسح تسجيل مش بتاعك')}          // لو اتعدّل أثناء الإرسال يفضل معلّق
+      S.pendingDel=S.pendingDel.filter(id=>dels.indexOf(id)<0);save();
+    }
+    if(manual)toast('اتبعت للشيت ✓');
+  }catch(e){if(manual)toast('مقدرش يبعت: '+(e.message||e)+' — هيفضل معلّق')}
+  syncing=false;updateSyncPill();if($('v-log').classList.contains('active'))renderLog();
+  resolveConflicts();
+}
+let resolving=false;
+async function resolveConflicts(){
+  if(resolving||!conflictRecs().length)return;resolving=true;let changed=false;
+  try{for(const r of conflictRecs()){
+    const keep=await ask('تسجيل مكرر','يوم '+r.date.split('-').reverse().join('/')+' — '+r.company+' / '+r.dept+' / '+r.shift+' / '+r.hours+' ساعات: اتسجّل قبل كده '+r.conflict.count+' عامل'+(r.conflict.by?' بواسطة '+r.conflict.by:'')+'. إنت سجّلت '+r.count+'. تسجّله برضه كتسجيل منفصل (يتجمّع عليه) ولا تمسح تسجيلك؟','سجّله برضه','امسح تسجيلي');
+    if(keep){r.force=true;delete r.conflict;r.synced=false;changed=true}else{S.records=S.records.filter(x=>x.id!==r.id)}
+    save()}}finally{resolving=false}
+  updateSyncPill();if(changed)sync();if($('v-log').classList.contains('active'))renderLog()}
+$('btnSyncNow').onclick=()=>sync(true);
+$('btnPing').onclick=async()=>{try{const j=await post({ping:1});toast('الاتصال تمام ✓ — '+(j.user||'')+' ('+(j.role==='admin'?'مدير':'مستخدم')+')');renderSettings();sync()}catch(e){toast('فشل: '+(e.message||e))}};
+function applyLists(L){const s=S.settings;
+  ['companies','depts','shifts','types'].forEach(k=>{if(L[k]&&L[k].length)s.lists[k]=L[k]});
+  if(L.rates&&Object.keys(L.rates).length)s.rates=L.rates;
+  if(L.officeRates)s.officeRates=L.officeRates;if(L.officePenalty)s.officePenalty=L.officePenalty;
+  if(L.hours)s.userHours=L.hours;if(L.penaltyBase!=null)s.penaltyBase=L.penaltyBase;if(L.penaltyPct!=null)s.penaltyPct=L.penaltyPct;
+  S.pricingDirty=false;save();F.hours=hoursOptions(F.company)[0]||8;renderForm();if($('v-set').classList.contains('active'))renderSettings()}
+/* القوائم بتتسحب تلقائي: المستخدم دايماً، والمدير أول مرة بس (بعد كده تعديلاته هي اللي بتتبعت للشيت) */
+async function autoLists(){if(needLogin())return;if(isAdmin()&&S.settings.lists.companies.length)return;
+  try{const j=await post({getLists:1});applyLists(j.lists||{})}catch(e){}}
+['gUrl','gCode'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')$('gEnter').click()}));
+$('gEnter').onclick=async()=>{
+  const u=$('gUrl').value.trim(),c=$('gCode').value.trim();$('gErr').textContent='';
+  if(!u||!c){$('gErr').textContent='اكتب الرابط والكود';return}
+  S.settings.url=u;S.settings.code=c;S.role='';save();$('gEnter').disabled=true;$('gEnter').textContent='جاري الدخول…';
+  try{const j=await post({ping:1});$('gCode').value='';applyRole();await autoLists();renderForm();updateSyncPill();sync();toast('دخلت ✓ — '+(j.user||'')+' ('+(j.role==='admin'?'مدير':'مستخدم')+')')}
+  catch(e){S.role='';S.settings.code='';save();$('gErr').textContent=(e.message==='Failed to fetch'?'مفيش اتصال بالنت أو الرابط غلط':e.message)||'فشل الدخول'}
+  $('gEnter').disabled=false;$('gEnter').textContent='دخول';applyRole()};
+$('btnLogout').onclick=async()=>{
+  const p=S.records.filter(r=>!r.synced).length+S.pendingDel.length;
+  if(!await ask('تسجيل الخروج؟',(p?'⚠ في '+p+' تسجيل لسه ماتبعتش للشيت وهيضيع لو خرجت. ':'')+'هيتمسح الكود وكل البيانات من الجهاز ده.','اخرج','لا'))return;
+  const url=S.settings.url;S={role:'',userName:'',evalGroups:[],sheetOnly:[],records:[],pendingDel:[],settings:JSON.parse(JSON.stringify(DEF)),lastForm:null};S.settings.url=url;
+  try{localStorage.setItem(LS_KEY,JSON.stringify(S))}catch(e){}location.reload()};
+/* المدير بيسحب تسجيلات كل المستخدمين من الشيت للفترة اللي قدامه */
+let pullKey='',pullAt=0;
+function mergePulled(a,z,rows){
+  const pend={};S.records.forEach(r=>{if(!r.synced)pend[r.id]=1});
+  const keep=S.records.filter(r=>!(r.date>=a&&r.date<=z&&r.synced));
+  const add=[],only=[];
+  rows.forEach((x,i)=>{if(/^r#/.test(x.id)){only.push(Object.assign({synced:true,ts:i},x))}else if(!pend[x.id]){add.push(Object.assign({synced:true,ts:i},x))}});
+  S.records=keep.concat(add);S.sheetOnly=(S.sheetOnly||[]).filter(r=>!(r.date>=a&&r.date<=z)).concat(only);save();
+}
+async function pullRange(a,z,manual){
+  if(needLogin()||!a||!z)return;
+  if(!isAdmin()&&(Date.parse(z)-Date.parse(a))/864e5>60)return;
+  const key=a+'|'+z;if(!manual&&key===pullKey&&Date.now()-pullAt<20000)return;pullKey=key;pullAt=Date.now();
+  try{const j=await post({getRecords:1,from:a,to:z});mergePulled(a,z,j.records||[]);
+    if($('v-log').classList.contains('active'))renderLog();if($('v-rep').classList.contains('active'))renderRep();if(manual)toast('اتحدّث من الشيت ✓ ('+(j.records||[]).length+' تسجيل)')}
+  catch(e){if(manual)toast('فشل التحديث: '+(e.message||e))}}
+function autoPull(manual){
+  if($('v-log').classList.contains('active')){const d=$('lDate').value||yesterday();pullRange(d,d,manual)}
+  else if($('v-rep').classList.contains('active')){pullRange($('rFrom').value,$('rTo').value,manual)}}
+$('btnPullLog').onclick=()=>autoPull(true);$('btnPullRep').onclick=()=>autoPull(true);
+$('btnPullLists').onclick=async()=>{try{const j=await post({getLists:1});applyLists(j.lists||{});updateSyncPill();toast('اتحدّثت القوائم والأسعار من الشيت ✓')}catch(e){toast('فشل: '+(e.message||e))}};
+window.addEventListener('online',()=>sync());
+
+/* ================= التقييم ================= */
+const EV={defs:[],vals:{},dirty:{},month:''};
+function evKey(c,k){return c+'||'+k}
+async function renderEval(){
+  const m=$('eMonth');if(!m.value)m.value=todayStr().slice(0,7);EV.month=m.value;
+  $('eList').innerHTML='<div class="empty">بحمّل...</div>';
+  try{const j=await post({getEval:1,month:m.value});if(m.value!==EV.month)return;EV.defs=j.defs||[];EV.vals={};EV.dirty={};(j.values||[]).forEach(x=>EV.vals[evKey(x.company,x.key)]=x.value);drawEval()}
+  catch(e){$('eList').innerHTML='<div class="empty">تعذّر تحميل التقييم: '+esc(e.message||e)+'</div>'}}
+function drawEval(){
+  const groups=[];EV.defs.forEach(d=>{if(groups.indexOf(d[0])<0)groups.push(d[0])});
+  $('eList').innerHTML=S.settings.lists.companies.map(c=>'<div class="evc" style="border-right-color:'+colorOf(c)+'"><h4 style="color:'+colorOf(c)+'">● '+esc(c)+'</h4>'+groups.map(g=>'<div class="evg">'+esc(g)+'</div>'+EV.defs.filter(d=>d[0]===g).map(d=>{const k=g+'/'+d[1],v=EV.vals[evKey(c,k)];
+    return '<div class="evr"><span>'+esc(d[1])+'</span><input type="number" inputmode="decimal" min="0" step="any" data-c="'+esc(c)+'" data-k="'+esc(k)+'" value="'+(v==null?'':v)+'"></div>'}).join('')).join('')+'</div>').join('')||'<div class="empty">ضيف مكاتب الأول</div>';
+  $('eList').querySelectorAll('input').forEach(i=>i.oninput=()=>{EV.dirty[evKey(i.dataset.c,i.dataset.k)]={company:i.dataset.c,key:i.dataset.k,value:i.value===''?'':Number(i.value)}})}
+$('eMonth').onchange=()=>{if(Object.keys(EV.dirty).length&&!confirm('فيه تقييم ماتحفظش. تكمل وتسيبه؟')){$('eMonth').value=EV.month;return}renderEval()};
+$('btnEvalSave').onclick=async()=>{const items=Object.values(EV.dirty);if(!items.length){toast('مفيش تغيير يتحفظ');return}
+  try{const j=await post({setEval:1,month:EV.month,items});toast('اتحفظ التقييم ✓ ('+j.saved+')');await renderEval()}catch(e){toast('فشل الحفظ: '+(e.message||e))}};
+
+/* ================= نسخة احتياطية ================= */
+$('btnBackup').onclick=()=>{const blob=new Blob([JSON.stringify({app:'work-labor',version:1,savedAt:new Date().toISOString(),data:S},null,1)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='عمالة-نسخة-'+todayStr()+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);toast('اتحفظت نسخة في ملف')};
+$('btnRestore').onclick=()=>$('fileRestore').click();
+$('fileRestore').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{let t=await f.text();t=t.replace(/^﻿/,'').trim();let o=JSON.parse(t);
+    if(o&&o.data&&typeof o.data==='object')o=o.data;
+    let recs=Array.isArray(o)?o:(Array.isArray(o.records)?o.records:null);
+    if(!recs)throw new Error('الملف مش نسخة من التطبيق ده');
+    recs=recs.filter(r=>r&&r.date&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&r.company).map(r=>Object.assign({id:r.id||uid(),type:'',shift:'',dept:'',count:0,hours:8,delayed:0,notes:'',manualCost:false,cost:null,ts:Date.now()},r,{synced:false}));
+    if(!await ask('استعادة النسخة؟','هيتحمّل '+recs.length+' تسجيل بدل اللي على الجهاز دلوقتي ('+S.records.length+'). التسجيلات هتتبعت للشيت تاني (بدون تكرار).','استعيد','لا'))return;
+    S.records=recs;S.pendingDel=[];if(!Array.isArray(o)&&o.settings){S.settings=Object.assign(S.settings,o.settings);S.settings.lists=Object.assign(JSON.parse(JSON.stringify(DEF.lists)),o.settings.lists||{})}
+    save();renderForm();renderSettings();updateSyncPill();sync();toast('اتستعادت '+recs.length+' تسجيل ✓')}
+  catch(err){toast('الملف مش مقروء: '+(err.message||err))}};
+
+/* تشغيل بدون نت: تخزين نسخة التطبيق على الجهاز */
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+/* ================= تشغيل ================= */
+F.hours=hoursOptions('')[0]||8;
+renderForm();applyRole();updateSyncPill();sync();autoLists();
+</script>
+</body>
+</html>
