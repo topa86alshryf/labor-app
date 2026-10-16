@@ -6,6 +6,7 @@
 <title>تسجيل العمالة</title>
 <meta name="theme-color" content="#4F0F20" id="metaTheme">
 <link rel="manifest" href="manifest.json">
+<script src="config.js"></script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
@@ -112,6 +113,18 @@ body.no-eval .evaltab{display:none!important}
 .ochips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.ochip{border:1.5px solid var(--border);border-radius:20px;padding:5px 11px;font-size:12.5px;font-weight:700;background:var(--field);cursor:pointer}.ochip.zero{opacity:.55;border-style:dashed}.ochip.on{outline:2px solid var(--accent)}
 .evc{border-right:6px solid var(--accent);border-radius:14px;background:var(--field);padding:10px 12px;margin-bottom:10px}.evc h4{margin:0 0 8px;font-size:15px}.evg{font-size:12.5px;font-weight:800;color:var(--accent);margin:8px 0 4px}.evr{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:13.5px}.evr input{width:84px;text-align:center}
 .ro{font-size:11.5px;color:var(--faint)}
+body:not(.role-user) .user-only{display:none!important}
+#lockscr{position:fixed;inset:0;z-index:500;background:linear-gradient(135deg,var(--grad-a),var(--grad-b));display:none;align-items:center;justify-content:center;padding:22px}
+body.applock #lockscr{display:flex}body.applock .wrap,body.applock .tabbar,body.applock header{display:none!important}
+.lkon{padding:9px 12px;border-radius:12px;background:var(--rose);font-weight:700;color:var(--accent);margin-bottom:8px}
+.btn.pullbtn{background:linear-gradient(135deg,var(--grad-a),var(--grad-b));color:#fff;border:none;font-size:16px;font-weight:800;padding:15px;box-shadow:0 6px 16px var(--accent-line);margin-top:12px}
+.btn.pullbtn small{display:block;font-weight:600;font-size:11.5px;opacity:.85;margin-top:3px}
+.btn.pullbtn.busy{opacity:.7}
+.stars{display:flex;gap:2px;direction:ltr}.stars button{border:none;background:none;font-size:26px;line-height:1;padding:2px 3px;color:var(--border);cursor:pointer}.stars button.on{color:#F5A700}
+.evm{display:flex;gap:6px;margin-bottom:10px}.evm button{flex:1}
+.ubox{border:1.5px solid var(--border);border-radius:14px;padding:10px 12px;margin-bottom:10px;background:var(--field)}.ubox .un{font-weight:800;font-size:15px}.ubox .bd{display:inline-block;font-size:11.5px;border-radius:10px;padding:2px 8px;background:var(--accent-soft);color:var(--accent);margin-right:6px}.ubox.off{opacity:.6}
+.ubox label.cb{display:inline-flex;align-items:center;gap:4px;margin:6px 0 0 12px;font-size:13px}.ubox .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.codebox{border:2px dashed var(--accent);border-radius:14px;padding:12px;background:var(--accent-soft);margin-bottom:10px}.codebox code{display:block;direction:ltr;font-size:20px;font-weight:800;letter-spacing:1px;text-align:center;margin:8px 0;user-select:all}
 #whoami{margin-top:10px;padding:9px 12px;border-radius:12px;background:var(--rose);font-size:13.5px;font-weight:700;color:var(--accent)}
 @media print{
   :root,html.dark{--bg:#fff;--card:#fff;--ink:#000;--sub:#333;--faint:#555;--field:#f3f3f3;--line:#ddd;--border:#ccc;--accent:#8a0f1f}
@@ -178,6 +191,10 @@ body.no-eval .evaltab{display:none!important}
 </style>
 </head>
 <body>
+<div id="lockscr"><div class="gbox"><h1>🔒 التطبيق مقفول</h1><p>اكتب كلمة السر عشان تفتحه</p>
+  <input type="password" id="lkPw" autocomplete="current-password" placeholder="كلمة السر"><div id="lkErr" style="color:var(--accent);font-weight:700;font-size:13px;margin-top:8px;min-height:18px"></div>
+  <button class="btn" id="lkOpen" style="margin-top:6px">فتح</button>
+  <button class="btn sec" id="lkForgot" style="margin-top:8px">نسيت كلمة السر</button></div></div>
 <div id="gate"><div class="gbox"><h1>تسجيل العمالة</h1><p>سجّل دخولك بالكود اللي المدير إداك.</p>
   <label class="l">رابط الشيت (Web App)</label><input id="gUrl" dir="ltr" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
   <label class="l">كود الدخول</label><input id="gCode" type="password" dir="ltr" autocomplete="off">
@@ -212,12 +229,14 @@ body.no-eval .evaltab{display:none!important}
       <div class="admin-only"><label class="l">تكلفة اليوم (ج)</label><input type="number" inputmode="decimal" id="fCostManual" placeholder="مثلاً 250"></div></div>
       <p class="note" id="otherNote"></p>
     </div>
-    <label class="l">عدد العمالة المتأخرة</label>
+    <label class="l">عدد عمال مجازة</label>
     <div class="stepper"><button type="button" data-step="delayed" data-d="-1">−</button><input type="number" inputmode="numeric" min="0" id="fDelayed" placeholder="0"><button type="button" data-step="delayed" data-d="1">+</button></div>
+    <div class="admin-only"><label class="l">نسبة خصم % <span class="ro">(اختياري — فاضي = النسبة الافتراضية للمكتب)</span></label><input type="number" inputmode="decimal" min="0" max="100" step="any" id="fDisc" placeholder="مثلاً 25"></div>
+    <p class="note user-only">تقدر تعدّل أو تمسح تسجيلاتك خلال يومين من وقت التسجيل بس.</p>
     <label class="l">ملاحظات</label><textarea id="fNotes" placeholder="اختياري"></textarea>
     </div>
     <div class="fside">
-    <div class="preview admin-only"><div><b id="pCost">—</b><span>تكلفة اليوم</span></div><div><b id="pTotal">—</b><span>الإجمالي</span></div><div><b id="pPen">—</b><span>الجزاء</span></div></div>
+    <div class="preview admin-only"><div><b id="pCost">—</b><span>تكلفة اليوم</span></div><div><b id="pTotal">—</b><span>الإجمالي</span></div><div><b id="pPen">—</b><span>الخصم</span></div></div>
     <div class="warnbox" id="formWarn"></div>
     <button class="btn" id="btnSave">حفظ</button>
     <div class="row2"><button class="btn sec" id="btnCopyLast">نسخ من آخر تسجيل</button><button class="btn sec" id="btnClear">مسح الحقول</button></div>
@@ -231,7 +250,8 @@ body.no-eval .evaltab{display:none!important}
   <div class="card">
     <div class="daynav"><button id="dPrev">›</button><input type="date" id="lDate"><button id="dNext">‹</button></div>
     <label class="l">المكتب</label><select id="lCompany"></select>
-    <button class="btn sec" id="btnPullLog" style="margin-top:10px">🔄 تحديث من الشيت (تسجيلات الكل)</button>
+    <button class="btn pullbtn" id="btnPullLog">🔄 تحديث من الشيت<small>اضغط عشان تشوف تسجيلات باقي المستخدمين — <span class="pullat">لسه ماتحدّثش</span></small></button>
+    <p class="note user-only" style="margin:8px 0 0">تقدر تعدّل أو تمسح تسجيلاتك خلال يومين فقط من وقت تسجيلها.</p>
     <div class="ochips" id="lChips"></div>
     <div class="kpis" style="margin-top:12px"><div class="kpi"><b id="lWorkers">0</b><span>عمالة اليوم</span></div><div class="kpi admin-only"><b id="lAmount">0</b><span>المبلغ (ج)</span></div></div>
   </div>
@@ -242,12 +262,12 @@ body.no-eval .evaltab{display:none!important}
 <section class="view" id="v-rep">
   <div class="card">
     <div class="grid2"><div><label class="l">من</label><input type="date" id="rFrom"></div><div><label class="l">إلى</label><input type="date" id="rTo"></div></div>
-    <button class="btn sec" id="btnPullRep" style="margin-top:10px">🔄 تحديث من الشيت</button>
+    <button class="btn pullbtn" id="btnPullRep">🔄 تحديث من الشيت<small>اضغط عشان يتحسب التقرير من آخر بيانات في الشيت — <span class="pullat">لسه ماتحدّثش</span></small></button>
     <div class="seg" style="margin-top:8px"><button type="button" data-q="month">الشهر ده</button><button type="button" data-q="prev">الشهر اللي فات</button><button type="button" data-q="w">آخر 7 أيام</button></div>
     <label class="l">المكتب (للفاتورة اليومية)</label><select id="rCompany"></select>
     <div class="kpis" style="margin-top:12px">
       <div class="kpi"><b id="rWorkers">0</b><span>إجمالي العمالة</span></div><div class="kpi"><b id="rAmount">0</b><span>إجمالي المبلغ</span></div>
-      <div class="kpi"><b id="rPen">0</b><span>الجزاءات</span></div><div class="kpi"><b id="rNet">0</b><span>الصافي بعد الجزاء</span></div>
+      <div class="kpi"><b id="rPen">0</b><span>الخصومات</span></div><div class="kpi"><b id="rNet">0</b><span>الصافي بعد الخصم</span></div>
     </div>
     <p class="note" id="rWarn"></p>
   </div>
@@ -270,9 +290,17 @@ body.no-eval .evaltab{display:none!important}
 <!-- ============ التقييم ============ -->
 <section class="view" id="v-eval">
   <div class="card">
-    <label class="l">الشهر</label><input type="month" id="eMonth">
-    <p class="sub" style="font-size:13px;margin:8px 0 0">دخّل تقييم كل مكتب للبنود اللي مطلوبة منك بس. القيمة بتتحفظ في الشيت لما تدوس «حفظ التقييم».</p>
-    <button class="btn" id="btnEvalSave" style="margin-top:10px">حفظ التقييم</button>
+    <div class="seg evm"><button type="button" class="on" data-em="day">التقييم اليومي</button><button type="button" data-em="mon">إحصائيات الشهر</button></div>
+    <div id="eDay">
+      <div class="daynav"><button id="ePrev">›</button><input type="date" id="eDate"><button id="eNext">‹</button></div>
+      <label class="l">المكتب</label><div class="ochips" id="eChips" style="margin-top:6px"></div>
+      <p class="sub" style="font-size:13px;margin:8px 0 0">اختار المكتب وقيّم كل بند من 1 لـ 5 نجوم (اضغط نفس النجمة تاني لمسح التقييم). التقييم بيتسجّل على اليوم اللي فوق.</p>
+      <button class="btn" id="btnEvalSave" style="margin-top:10px">حفظ تقييم اليوم</button>
+    </div>
+    <div id="eMon" style="display:none">
+      <label class="l">الشهر</label><input type="month" id="eMonth">
+      <label class="l">المكتب</label><select id="eStatCo"></select>
+    </div>
   </div>
   <div class="card" style="margin-top:0"><div id="eList" class="evgrid"></div></div>
 </section>
@@ -288,16 +316,31 @@ body.no-eval .evaltab{display:none!important}
     <button class="btn sec admin-only" id="btnPullLists">جلب القوائم والأسعار من الشيت</button>
     <button class="btn danger" id="btnLogout">تسجيل الخروج من الجهاز</button>
     <p class="note" id="syncNote"></p></div>
+  <div class="card" style="margin-top:0"><h2>🔒 قفل التطبيق بكلمة سر</h2>
+    <p class="note" style="margin-top:0">اختياري: لو حابب تحمي التطبيق من العبث على جهازك، حط كلمة سر (من غير اسم) والتطبيق هيطلبها كل مرة تفتحه أو ترجع له. الكلمة محفوظة على الجهاز ده بس، ومحدش غيرك يعرفها.</p>
+    <div id="lockOff"><label class="l">كلمة السر (4 حروف أو أرقام على الأقل)</label><input type="password" id="lkNew" autocomplete="new-password">
+      <label class="l">أكّدها</label><input type="password" id="lkNew2" autocomplete="new-password">
+      <button class="btn sec" id="lkSave">تفعيل القفل</button></div>
+    <div id="lockOn" style="display:none"><div class="lkon">🔒 القفل شغّال على الجهاز ده</div>
+      <label class="l">كلمة السر الحالية</label><input type="password" id="lkCur" autocomplete="current-password">
+      <div class="row2"><button class="btn sec" id="lkChange">تغيير الكلمة (اكتب الجديدة فوق)</button><button class="btn danger" id="lkRemove">إلغاء القفل</button></div></div></div>
+  <div class="card admin-only" style="margin-top:0"><h2>المستخدمين</h2>
+    <div id="uCode"></div><div id="uList"></div>
+    <h3 style="margin:14px 0 6px;font-size:14px">إضافة مستخدم جديد</h3>
+    <div class="grid2"><div><label class="l">الاسم</label><input id="uName" maxlength="40" placeholder="مثلاً أحمد"></div><div><label class="l">الصلاحية</label><select id="uRole"><option value="user">مستخدم</option><option value="admin">مدير</option></select></div></div>
+    <div id="uGroups" style="margin:6px 0"><span class="ro">يقيّم المكاتب (اختياري):</span> <label class="cb" style="display:inline-flex;gap:4px;margin:0 10px 0 0;font-size:13px"><input type="checkbox" data-g="HR">HR</label><label class="cb" style="display:inline-flex;gap:4px;margin:0 10px 0 0;font-size:13px"><input type="checkbox" data-g="الامن">الامن</label><label class="cb" style="display:inline-flex;gap:4px;margin:0 10px 0 0;font-size:13px"><input type="checkbox" data-g="QC">QC</label></div>
+    <button class="btn" id="uAdd">إنشاء وتوليد كود</button>
+    <p class="note">الكود بيتولّد عشوائي ويظهر لك مرة واحدة بس (السيرفر بيحتفظ ببصمة مشفّرة منه). لو ضاع، ولّد كود جديد.</p></div>
   <div class="card admin-only" style="margin-top:0"><h2>القوائم</h2>
     <div id="listsBox"></div></div>
-  <div class="card admin-only" style="margin-top:0"><h2>الأسعار والجزاء</h2>
+  <div class="card admin-only" style="margin-top:0"><h2>الأسعار والخصم</h2>
     <label class="l">المكتب</label><select id="sOffice"></select>
     <p class="note" id="priceNote"></p>
     <div id="officeColorBox" style="display:none"><label class="l">لون المكتب</label><input type="color" id="sColor" style="height:44px;padding:4px"></div>
     <div id="ratesBox" style="margin-top:8px"></div>
     <button class="btn sec" id="btnAddRate">+ سعر ساعات جديد</button>
-    <div class="grid2"><div><label class="l">أساس الجزاء (ج)</label><input type="number" id="sPenBase" inputmode="decimal"></div><div><label class="l">نسبة الجزاء</label><input type="number" id="sPenPct" step="0.05" inputmode="decimal"></div></div>
-    <p class="note">الجزاء = أساس الجزاء × النسبة × عدد العمالة المتأخرة.<br>أي تعديل هنا (قوائم أو أسعار أو جزاء) بيتبعت للشيت تلقائي، والشيت هو اللي بيحسب المبلغ النهائي.</p></div>
+    <div class="grid2"><div><label class="l">أساس الخصم (ج)</label><input type="number" id="sPenBase" inputmode="decimal"></div><div><label class="l">نسبة الخصم الافتراضية</label><input type="number" id="sPenPct" step="0.05" inputmode="decimal"></div></div>
+    <p class="note">الخصم = أساس الخصم × النسبة × عدد عمال مجازة (والنسبة ممكن تتغير لكل تسجيل).<br>أي تعديل هنا (قوائم أو أسعار أو خصم) بيتبعت للشيت تلقائي، والشيت هو اللي بيحسب المبلغ النهائي.</p></div>
   <div class="card" style="margin-top:0"><h2>نسخة احتياطية</h2>
     <div class="row2"><button class="btn sec" id="btnBackup">حفظ نسخة (ملف)</button><button class="btn sec" id="btnRestore">استعادة من ملف</button></div>
     <input type="file" id="fileRestore" accept=".json,application/json,text/plain" style="display:none">
@@ -326,8 +369,10 @@ const DEF={
 };
 let S={role:'',userName:'',evalGroups:[],sheetOnly:[],records:[],pendingDel:[],settings:JSON.parse(JSON.stringify(DEF)),lastForm:null};
 function load(){try{const v=localStorage.getItem(LS_KEY);if(v){const o=JSON.parse(v);S=Object.assign(S,o);S.settings=Object.assign(JSON.parse(JSON.stringify(DEF)),o.settings||{});S.settings.lists=Object.assign(JSON.parse(JSON.stringify(DEF.lists)),(o.settings||{}).lists||{});}}catch(e){}}
+function cfgUrl(){return String((window.LABOR_CONFIG&&window.LABOR_CONFIG.sheetUrl)||'').trim()}
+function applyCfg(){if(cfgUrl()&&S.settings.url!==cfgUrl())S.settings.url=cfgUrl();if(cfgUrl()){const g=document.getElementById('gUrl');if(g){g.style.display='none';if(g.previousElementSibling)g.previousElementSibling.style.display='none'}}}
 function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(S));return true}catch(e){toast('تعذّر الحفظ على الجهاز — المساحة ممتلئة؟');return false}}
-load();
+load();applyCfg();
 
 /* ================= أدوات ================= */
 const $=id=>document.getElementById(id);
@@ -352,7 +397,7 @@ function costFor(hours,co){const r=ratesFor(co)[hours];return r==null?null:Numbe
 function allHours(){const set={};Object.keys(S.settings.rates).forEach(h=>set[h]=1);Object.values(S.settings.officeRates||{}).forEach(o=>Object.keys(o).forEach(h=>set[h]=1));return Object.keys(set).map(Number).sort((a,b)=>a-b)}
 function recCost(r){const k=costFor(r.hours,r.company);if(k!=null)return k;return r.manualCost&&r.cost!=null?Number(r.cost):null}
 function recTotal(r){const c=recCost(r);return c==null?0:(Number(r.count)||0)*c}
-function recPen(r){const p=penFor(r.company);return (Number(r.delayed)||0)*p.base*p.pct}
+function recPen(r){const p=penFor(r.company);return (Number(r.delayed)||0)*p.base*(r.discount!=null&&r.discount!==''?Number(r.discount):p.pct)}
 /* ألوان المكاتب */
 const PALETTE=['#D0112B','#2563A8','#14804A','#C0790C','#7C3AED','#0E7490','#BE185D','#65A30D','#EA580C','#475569'];
 function colorOf(co){const c=(S.settings.colors||{})[co];if(c)return c;let i=S.settings.lists.companies.indexOf(co);if(i<0){i=0;for(const ch of String(co))i+=ch.charCodeAt(0)}return PALETTE[i%PALETTE.length]}
@@ -362,7 +407,15 @@ function colorOf(co){const c=(S.settings.colors||{})[co];if(c)return c;let i=S.s
 function needLogin(){return !S.settings.url||!S.settings.code||!S.role}
 function isAdmin(){return S.role==='admin'}
 function canEval(){return !needLogin()&&(isAdmin()||(S.evalGroups||[]).length>0)}
-function canEdit(r){return !/^r#/.test(r.id)&&(isAdmin()||!r.by||r.by===S.userName)}
+const EDIT_MS=48*3600e3;
+function canEdit(r){
+  if(/^r#/.test(r.id))return false;if(isAdmin())return true;
+  if(r.by&&r.by!==S.userName)return false;
+  if(r.editable===false)return false;
+  if(r.created&&Date.now()-r.created>EDIT_MS)return false;
+  if(r.synced&&r.editable!==true&&!r.created)return false;
+  return true}
+function lockedOwn(r){return !isAdmin()&&!/^r#/.test(r.id)&&r.by===S.userName&&!canEdit(r)}
 function applyRole(){
   document.body.classList.toggle('role-user',!isAdmin());
   document.body.classList.toggle('locked',needLogin());
@@ -385,7 +438,7 @@ $('btnTheme').onclick=()=>{const d=document.documentElement.classList.toggle('da
 
 /* ================= نموذج التسجيل ================= */
 const yesterday=()=>addDays(todayStr(),-1);
-const F={date:yesterday(),company:'',dept:'',shift:'',type:'',count:'',hours:8,delayed:'',notes:'',editing:null};
+const F={date:yesterday(),company:'',dept:'',shift:'',type:'',count:'',hours:8,delayed:'',disc:'',notes:'',editing:null};
 function fillSelect(sel,arr,cur,ph){sel.innerHTML=(ph?'<option value="">'+ph+'</option>':'')+arr.map(x=>'<option'+(x===cur?' selected':'')+'>'+esc(x)+'</option>').join('')}
 function renderSeg(el,arr,cur,on){el.innerHTML=arr.map(x=>'<button type="button" class="'+(String(x)===String(cur)?'on':'')+'" data-v="'+esc(x)+'">'+esc(x)+'</button>').join('');
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>on(b.dataset.v))}
@@ -403,7 +456,7 @@ function renderForm(){
   $('fHours').innerHTML=hs.map(h=>'<button type="button" class="'+(F.hours===h?'on':'')+'" data-h="'+h+'">'+h+' س</button>').join('')+'<button type="button" class="'+(F.hours==='other'?'on':'')+'" data-h="other">أخرى</button>';
   $('fHours').querySelectorAll('button').forEach(b=>b.onclick=()=>{F.hours=b.dataset.h==='other'?'other':Number(b.dataset.h);renderForm()});
   $('otherBox').style.display=F.hours==='other'?'block':'none';
-  $('fDate').value=F.date;$('fCount').value=F.count;$('fDelayed').value=F.delayed;$('fNotes').value=F.notes;
+  $('fDate').value=F.date;$('fCount').value=F.count;$('fDelayed').value=F.delayed;$('fDisc').value=F.disc;$('fNotes').value=F.notes;
   $('formTitle').textContent=F.editing?'تعديل تسجيل':'تسجيل جديد';
   $('btnSave').textContent=F.editing?'حفظ التعديل':'حفظ';
   $('btnCancelEdit').style.display=F.editing?'block':'none';
@@ -420,10 +473,10 @@ function updatePreview(){
     $('otherNote').textContent=!isAdmin()?'ساعات غير معتادة: المدير هيحدد التكلفة بعد كده.':known!=null?'الساعات دي ليها سعر في القائمة ('+known+' ج).':'ساعات غير معتادة: اكتب تكلفة اليوم بنفسك.'}
   $('pCost').textContent=cost==null?'—':fmt(cost);
   $('pTotal').textContent=cost==null?'—':fmt(n*cost);
-  $('pPen').textContent=fmt(d*pf.base*pf.pct);
+  {const dv=$('fDisc').value;$('pPen').textContent=fmt(d*pf.base*(dv!==''&&!isNaN(dv)?Number(dv)/100:pf.pct))}
 }
-function readForm(){F.date=$('fDate').value;F.company=$('fCompany').value;F.dept=$('fDept').value;F.count=$('fCount').value;F.delayed=$('fDelayed').value;F.notes=$('fNotes').value}
-['fDate','fCompany','fDept','fCount','fDelayed','fNotes','fHoursOther','fCostManual'].forEach(id=>$(id).addEventListener('input',()=>{readForm();updatePreview();if(id==='fDate')applyRole();$('formWarn').style.display='none'}));
+function readForm(){F.date=$('fDate').value;F.company=$('fCompany').value;F.dept=$('fDept').value;F.count=$('fCount').value;F.delayed=$('fDelayed').value;F.disc=$('fDisc').value;F.notes=$('fNotes').value}
+['fDate','fCompany','fDept','fCount','fDelayed','fDisc','fNotes','fHoursOther','fCostManual'].forEach(id=>$(id).addEventListener('input',()=>{readForm();updatePreview();if(id==='fDate')applyRole();$('formWarn').style.display='none'}));
 $('fCompany').addEventListener('change',()=>{readForm();renderForm()});
 document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{const el=$(b.dataset.step==='count'?'fCount':'fDelayed');el.value=Math.max(0,(Number(el.value)||0)+Number(b.dataset.d));readForm();updatePreview()});
 
@@ -434,10 +487,12 @@ function buildRecord(){
   if(!F.dept)return 'اختار الإدارة';
   const n=Number(F.count);if(!(n>0)||n!==Math.floor(n))return 'اكتب عدد العمالة (رقم صحيح أكبر من صفر)';
   if(h==null||!(h>0)||h>24)return 'اكتب عدد الساعات صح';
-  const d=Number(F.delayed)||0;if(d<0||d>n||d!==Math.floor(d))return 'عدد المتأخرين لازم يكون من صفر لحد عدد العمالة';
+  const d=Number(F.delayed)||0;if(d<0||d>n||d!==Math.floor(d))return 'عدد عمال مجازة لازم يكون من صفر لحد عدد العمالة';
+  let discount=null;if(isAdmin()&&F.disc!==''){const dv=Number(F.disc);if(isNaN(dv)||dv<0||dv>100)return 'نسبة الخصم من 0 لـ 100';discount=dv/100}
+  const prev=F.editing?S.records.find(x=>x.id===F.editing):null;
   const known=costFor(h,F.company)!=null;let manual=false,cost=null;
   if(!known&&isAdmin()){const c=$('fCostManual').value;if(c===''||isNaN(c)||Number(c)<0)return 'الساعات دي مالهاش سعر — اكتب تكلفة اليوم';manual=true;cost=Number(c)}
-  return {id:F.editing||uid(),date:F.date,type:F.type,shift:F.shift,dept:F.dept,company:F.company,count:n,hours:h,delayed:d,notes:F.notes.trim(),manualCost:manual,cost:cost,synced:false,ts:Date.now(),by:S.userName||''};
+  return {id:F.editing||uid(),date:F.date,type:F.type,shift:F.shift,dept:F.dept,company:F.company,count:n,hours:h,delayed:d,notes:F.notes.trim(),manualCost:manual,cost:cost,discount:isAdmin()?discount:(prev?prev.discount:null),created:prev&&prev.created?prev.created:Date.now(),by:prev&&prev.by?prev.by:(S.userName||''),synced:false,ts:Date.now()};
 }
 $('fYest').onclick=()=>{readForm();F.date=yesterday();renderForm()};$('fToday').onclick=()=>{readForm();F.date=todayStr();renderForm()};
 $('btnSave').onclick=async()=>{
@@ -448,18 +503,18 @@ $('btnSave').onclick=async()=>{
   S.lastForm={company:r.company,dept:r.dept,shift:r.shift,type:r.type,hours:r.manualCost?'other':r.hours,count:r.count};
   if(!save())return;
   const wasEdit=!!F.editing;
-  F.editing=null;F.count='';F.delayed='';F.notes='';$('fHoursOther').value='';$('fCostManual').value='';
+  F.editing=null;F.count='';F.delayed='';F.disc='';F.notes='';$('fHoursOther').value='';$('fCostManual').value='';
   if(costFor(r.hours,r.company)==null)F.hours=hoursOptions(r.company)[0]||8;
   renderForm();toast(wasEdit?'اتحفظ التعديل ✓':'اتسجّل ✓ — '+r.company+' / '+r.dept+' / '+r.count+' عامل');
   updateSyncPill();sync();
 };
 $('btnCopyLast').onclick=()=>{const l=S.lastForm;if(!l)return toast('مفيش تسجيل سابق');
   F.company=l.company;F.dept=l.dept;F.shift=l.shift;F.type=l.type;F.hours=(l.hours==='other'||costFor(l.hours,l.company)==null)?hoursOptions(l.company)[0]||8:l.hours;F.count=l.count;renderForm();toast('اتنسخت بيانات آخر تسجيل — راجع العدد')};
-$('btnClear').onclick=()=>{F.count='';F.delayed='';F.notes='';F.company='';F.dept='';F.editing=null;$('fHoursOther').value='';$('fCostManual').value='';renderForm()};
-$('btnCancelEdit').onclick=()=>{F.editing=null;F.count='';F.delayed='';F.notes='';renderForm()};
+$('btnClear').onclick=()=>{F.count='';F.delayed='';F.disc='';F.notes='';F.company='';F.dept='';F.editing=null;$('fHoursOther').value='';$('fCostManual').value='';renderForm()};
+$('btnCancelEdit').onclick=()=>{F.editing=null;F.count='';F.delayed='';F.disc='';F.notes='';renderForm()};
 
 function editRecord(id){const r=S.records.find(x=>x.id===id);if(!r)return;
-  Object.assign(F,{date:r.date,company:r.company,dept:r.dept,shift:r.shift,type:r.type,count:r.count,delayed:r.delayed||'',notes:r.notes||'',editing:id});
+  Object.assign(F,{date:r.date,company:r.company,dept:r.dept,shift:r.shift,type:r.type,count:r.count,delayed:r.delayed||'',disc:r.discount!=null?Math.round(r.discount*10000)/100:'',notes:r.notes||'',editing:id});
   if(r.manualCost){F.hours='other';$('fHoursOther').value=r.hours;$('fCostManual').value=r.cost}else{F.hours=r.hours;}
   show('entry');renderForm();}
 
@@ -475,9 +530,9 @@ function renderLog(){
     return '<span class="ochip'+(n?'':' zero')+(co===c?' on':'')+'" data-co="'+esc(c)+'" style="border-color:'+col+';color:'+col+'">'+esc(c)+' · '+(n||'لا يوجد')+'</span>'}).join('');
   $('lChips').querySelectorAll('.ochip').forEach(e=>e.onclick=()=>{$('lCompany').value=$('lCompany').value===e.dataset.co?'':e.dataset.co;renderLog()});
   $('lList').innerHTML=list.length?list.map(r=>{const ed=canEdit(r);return '<div class="rec" data-id="'+esc(r.id)+'" style="border-right:6px solid '+colorOf(r.company)+';background:color-mix(in srgb,'+colorOf(r.company)+' 10%,var(--field))"><div class="top"><span style="color:'+colorOf(r.company)+'">● '+esc(r.company)+'</span><span>'+r.count+' عامل × '+r.hours+' س</span></div>'+
-    '<div class="mid">'+esc(r.dept)+' · '+esc(r.shift)+' · '+esc(r.type)+(r.delayed?' · متأخر '+r.delayed:'')+(r.notes?' · '+esc(r.notes):'')+'</div>'+
-    '<div class="bot"><span>'+(isAdmin()?'<b>'+(recCost(r)==null?'تكلفة ناقصة':fmt(recTotal(r))+' ج')+'</b>'+(r.delayed?' <span style="color:var(--accent)">جزاء '+fmt(recPen(r))+'</span>':''):'')+(r.by?' <span style="color:var(--faint);font-size:12px">· '+esc(r.by)+'</span>':'')+'</span>'+
-    '<span>'+(ed?'<span class="tag '+(r.synced&&!r.conflict?'ok':'wait')+'">'+(r.conflict?'مكرر — محتاج قرار':r.synced?'في الشيت':'معلّق')+'</span> <button class="btn small danger" data-del="'+esc(r.id)+'" style="margin-right:6px">مسح</button>':'<span class="ro">للاطلاع فقط</span>')+'</span></div></div>'}).join(''):'<div class="empty">مفيش تسجيلات في اليوم ده</div>';
+    '<div class="mid">'+esc(r.dept)+' · '+esc(r.shift)+' · '+esc(r.type)+(r.delayed?' · مجازة '+r.delayed:'')+(r.notes?' · '+esc(r.notes):'')+'</div>'+
+    '<div class="bot"><span>'+(isAdmin()?'<b>'+(recCost(r)==null?'تكلفة ناقصة':fmt(recTotal(r))+' ج')+'</b>'+(r.delayed?' <span style="color:var(--accent)">خصم '+fmt(recPen(r))+'</span>':''):'')+(r.by?' <span style="color:var(--faint);font-size:12px">· '+esc(r.by)+'</span>':'')+'</span>'+
+    '<span>'+(ed?'<span class="tag '+(r.synced&&!r.conflict?'ok':'wait')+'">'+(r.conflict?'مكرر — محتاج قرار':r.synced?'في الشيت':'معلّق')+'</span> <button class="btn small danger" data-del="'+esc(r.id)+'" style="margin-right:6px">مسح</button>':(lockedOwn(r)?'<span class="ro">🔒 اتقفل (عدّى يومين)</span>':'<span class="ro">للاطلاع فقط</span>'))+'</span></div></div>'}).join(''):'<div class="empty">مفيش تسجيلات في اليوم ده</div>';
   $('lList').querySelectorAll('.rec').forEach(e=>e.onclick=ev=>{if(ev.target.dataset.del)return;const r=S.records.find(x=>x.id===e.dataset.id);if(r&&canEdit(r))editRecord(e.dataset.id)});
   $('lList').querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{
     const r=S.records.find(x=>x.id===b.dataset.del);if(!r)return;
@@ -502,7 +557,7 @@ function renderRep(){
   $('rWorkers').textContent=tw;$('rAmount').textContent=fmt(ta);$('rPen').textContent=fmt(tp);$('rNet').textContent=fmt(ta-tp);
   const missing=rs.filter(r=>recCost(r)==null).length;$('rWarn').textContent=missing?'⚠ '+missing+' تسجيل تكلفته ناقصة وغير محسوبة في المبلغ.':'';
   const rows=S.settings.lists.companies.map(c=>{const x=rs.filter(r=>r.company===c);return {c,m:x.filter(r=>r.shift==='صباحية').reduce((s,r)=>s+r.count,0),e:x.filter(r=>r.shift==='مسائية').reduce((s,r)=>s+r.count,0),w:x.reduce((s,r)=>s+r.count,0),a:x.reduce((s,r)=>s+recTotal(r),0),p:x.reduce((s,r)=>s+recPen(r),0)}});
-  $('tOff').innerHTML='<thead><tr><th>المكتب</th><th>صباحي</th><th>مسائي</th><th>الإجمالي</th><th>المبلغ</th><th>جزاء</th></tr></thead><tbody>'+
+  $('tOff').innerHTML='<thead><tr><th>المكتب</th><th>صباحي</th><th>مسائي</th><th>الإجمالي</th><th>المبلغ</th><th>خصم</th></tr></thead><tbody>'+
     rows.map(r=>'<tr><td class="n" style="color:'+colorOf(r.c)+'">● '+esc(r.c)+'</td><td>'+r.m+'</td><td>'+r.e+'</td><td>'+r.w+'</td><td>'+fmt(r.a)+'</td><td>'+fmt(r.p)+'</td></tr>').join('')+'</tbody><tfoot><tr><td class="n">الإجمالي</td><td>'+rows.reduce((s,r)=>s+r.m,0)+'</td><td>'+rows.reduce((s,r)=>s+r.e,0)+'</td><td>'+tw+'</td><td>'+fmt(ta)+'</td><td>'+fmt(tp)+'</td></tr></tfoot>';
   renderDept(rs,a,z);
   // الفاتورة اليومية
@@ -512,13 +567,13 @@ function renderRep(){
   const cols=hs.concat(['other']);
   const inv=days.map(dt=>{const x=mine.filter(r=>r.date===dt);const o={dt,w:{},t:x.reduce((s,r)=>s+r.count,0),a:x.reduce((s,r)=>s+recTotal(r),0),p:x.reduce((s,r)=>s+recPen(r),0)};
     cols.forEach(h=>o.w[h]=x.filter(r=>h==='other'?hs.indexOf(Number(r.hours))<0:Number(r.hours)===h).reduce((s,r)=>s+r.count,0));return o});
-  $('tInv').innerHTML='<thead><tr><th>اليوم</th>'+cols.map(h=>'<th>'+(h==='other'?'أخرى':h+'س')+'</th>').join('')+'<th>إجمالي</th><th>المبلغ</th><th>جزاء</th></tr></thead><tbody>'+
+  $('tInv').innerHTML='<thead><tr><th>اليوم</th>'+cols.map(h=>'<th>'+(h==='other'?'أخرى':h+'س')+'</th>').join('')+'<th>إجمالي</th><th>المبلغ</th><th>خصم</th></tr></thead><tbody>'+
     (inv.length?inv.map(o=>'<tr><td class="n">'+o.dt.slice(8)+'/'+o.dt.slice(5,7)+'</td>'+cols.map(h=>'<td>'+(o.w[h]||'')+'</td>').join('')+'<td>'+o.t+'</td><td>'+fmt(o.a)+'</td><td>'+(o.p?fmt(o.p):'')+'</td></tr>').join(''):'<tr><td colspan="'+(cols.length+4)+'" class="empty">مفيش بيانات للمكتب ده في الشهر ده</td></tr>')+
     '</tbody><tfoot><tr><td class="n">الإجمالي</td>'+cols.map(h=>'<td>'+inv.reduce((s,o)=>s+(o.w[h]||0),0)+'</td>').join('')+'<td>'+inv.reduce((s,o)=>s+o.t,0)+'</td><td>'+fmt(inv.reduce((s,o)=>s+o.a,0))+'</td><td>'+fmt(inv.reduce((s,o)=>s+o.p,0))+'</td></tr></tfoot>';
   const ia=inv.reduce((s,o)=>s+o.a,0),ip=inv.reduce((s,o)=>s+o.p,0),iw=inv.reduce((s,o)=>s+o.t,0);
-  $('invSum').textContent='الإجمالي '+fmt(ia)+' ج − الجزاءات '+fmt(ip)+' ج = الصافي '+fmt(ia-ip)+' ج';
+  $('invSum').textContent='الإجمالي '+fmt(ia)+' ج − الخصومات '+fmt(ip)+' ج = الصافي '+fmt(ia-ip)+' ج';
   $('printHead').innerHTML='<h2>فاتورة عمالة — '+esc(co)+'</h2><div>الفترة: '+esc(m)+' · إجمالي العمالة: '+iw+'</div>';
-  window._invText=co+' — '+m+'\n'+inv.map(o=>o.dt+': '+o.t+' عامل = '+fmt(o.a)+(o.p?' (جزاء '+fmt(o.p)+')':'')).join('\n')+'\nالإجمالي: '+inv.reduce((s,o)=>s+o.t,0)+' عامل = '+fmt(inv.reduce((s,o)=>s+o.a,0))+' ج، جزاءات '+fmt(inv.reduce((s,o)=>s+o.p,0))+' ج';
+  window._invText=co+' — '+m+'\n'+inv.map(o=>o.dt+': '+o.t+' عامل = '+fmt(o.a)+(o.p?' (خصم '+fmt(o.p)+')':'')).join('\n')+'\nالإجمالي: '+inv.reduce((s,o)=>s+o.t,0)+' عامل = '+fmt(inv.reduce((s,o)=>s+o.a,0))+' ج، خصومات '+fmt(inv.reduce((s,o)=>s+o.p,0))+' ج';
 }
 
 function renderDept(rs,a,z){
@@ -563,7 +618,7 @@ function renderSettings(){
   $('listsBox').querySelectorAll('[data-add]').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('listsBox').querySelector('[data-addb="'+i.dataset.add+'"]').click()}}));
   $('listsBox').querySelectorAll('[data-addb]').forEach(b=>b.onclick=()=>{const k=b.dataset.addb,inp=$('listsBox').querySelector('[data-add="'+k+'"]'),v=inp.value.trim();
     if(!v)return;if(s.lists[k].indexOf(v)>=0)return toast('موجود قبل كده');s.lists[k].push(v);touchPricing();renderSettings();renderForm()});
-  renderPricing();
+  renderPricing();loadUsers();
   $('syncNote').textContent=s.url?'مربوط بالشيت. التسجيلات بتتبعت تلقائي، ولو النت قاطع بتستنى وتتبعت بعدين.':'الصق رابط الـ Web App وكود الأمان عشان التسجيلات تروح للشيت.';
 }
 let curOffice='';
@@ -611,7 +666,7 @@ function pendingCount(){return S.records.filter(r=>!r.synced&&!r.conflict).lengt
 function updateSyncPill(){const s=S.settings,p=pendingCount();
   $('syncTxt').textContent=conflictRecs().length?'⚠ '+conflictRecs().length+' تسجيل مكرر محتاج قرارك — اضغط':needLogin()?'سجّل دخولك':p?('⏳ '+p+' في الانتظار — اضغط للإرسال'):'✓ كل التسجيلات في الشيت'}
 $('syncPill').onclick=()=>{if(conflictRecs().length){resolveConflicts();return}if(needLogin())return;sync(true)};
-function payloadRec(r){return {id:r.id,date:r.date,type:r.type,shift:r.shift,dept:r.dept,company:r.company,count:r.count,hours:r.hours,delayed:r.delayed||0,notes:r.notes||'',manualCost:!!r.manualCost,cost:r.manualCost?r.cost:null,force:r.force?true:undefined}}
+function payloadRec(r){return {id:r.id,date:r.date,type:r.type,shift:r.shift,dept:r.dept,company:r.company,count:r.count,hours:r.hours,delayed:r.delayed||0,discount:r.discount==null?null:r.discount,notes:r.notes||'',manualCost:!!r.manualCost,cost:r.manualCost?r.cost:null,force:r.force?true:undefined}}
 async function sync(manual){
   if(syncing||!S.settings.url||!S.settings.code){if(manual&&!S.settings.url)toast('اربط الشيت من الإعدادات');return}
   if(!pendingCount()){if(manual)toast('مفيش حاجة معلّقة');return}
@@ -627,7 +682,10 @@ async function sync(manual){
       const rr=await post({records:recs.map(payloadRec).concat(dels.map(id=>({id,deleted:true})))});
       recs.forEach((r,i)=>{if(r.ts===sentVer[i])r.synced=true});
       (rr.duplicates||[]).forEach(d=>{const r=S.records.find(x=>x.id===d.id);if(r){r.synced=false;r.conflict={count:d.count,by:d.by}}});save();
-      if(rr.deniedIds&&rr.deniedIds.length){toast('مش مسموح تعدّل أو تمسح تسجيل مش بتاعك')}          // لو اتعدّل أثناء الإرسال يفضل معلّق
+      const bad=(rr.deniedIds||[]).concat(rr.expiredIds||[]);
+      if(bad.length){bad.forEach(id=>{const r=S.records.find(x=>x.id===id);if(r){r.synced=true;r.editable=false}});save();
+        toast((rr.expiredIds&&rr.expiredIds.length)?'عدّى يومين على التسجيل ده — التعديل/المسح اتقفل (كلّم المدير)':'مش مسموح تعدّل أو تمسح تسجيل مش بتاعك');
+        if(!isAdmin()){pullKey='';autoPull(true)}}
       S.pendingDel=S.pendingDel.filter(id=>dels.indexOf(id)<0);save();
     }
     if(manual)toast('اتبعت للشيت ✓');
@@ -656,7 +714,7 @@ async function autoLists(){if(needLogin())return;if(isAdmin()&&S.settings.lists.
   try{const j=await post({getLists:1});applyLists(j.lists||{})}catch(e){}}
 ['gUrl','gCode'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')$('gEnter').click()}));
 $('gEnter').onclick=async()=>{
-  const u=$('gUrl').value.trim(),c=$('gCode').value.trim();$('gErr').textContent='';
+  const u=cfgUrl()||$('gUrl').value.trim(),c=$('gCode').value.trim();$('gErr').textContent='';
   if(!u||!c){$('gErr').textContent='اكتب الرابط والكود';return}
   S.settings.url=u;S.settings.code=c;S.role='';save();$('gEnter').disabled=true;$('gEnter').textContent='جاري الدخول…';
   try{const j=await post({ping:1});$('gCode').value='';applyRole();await autoLists();renderForm();updateSyncPill();sync();toast('دخلت ✓ — '+(j.user||'')+' ('+(j.role==='admin'?'مدير':'مستخدم')+')')}
@@ -680,9 +738,11 @@ async function pullRange(a,z,manual){
   if(needLogin()||!a||!z)return;
   if(!isAdmin()&&(Date.parse(z)-Date.parse(a))/864e5>60)return;
   const key=a+'|'+z;if(!manual&&key===pullKey&&Date.now()-pullAt<20000)return;pullKey=key;pullAt=Date.now();
-  try{const j=await post({getRecords:1,from:a,to:z});mergePulled(a,z,j.records||[]);
+  document.querySelectorAll('.pullbtn').forEach(b=>b.classList.add('busy'));
+  try{const j=await post({getRecords:1,from:a,to:z});mergePulled(a,z,j.records||[]);const t=new Date();document.querySelectorAll('.pullat').forEach(e=>e.textContent='آخر تحديث '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0'));
     if($('v-log').classList.contains('active'))renderLog();if($('v-rep').classList.contains('active'))renderRep();if(manual)toast('اتحدّث من الشيت ✓ ('+(j.records||[]).length+' تسجيل)')}
-  catch(e){if(manual)toast('فشل التحديث: '+(e.message||e))}}
+  catch(e){if(manual)toast('فشل التحديث: '+(e.message||e))}
+  document.querySelectorAll('.pullbtn').forEach(b=>b.classList.remove('busy'))}
 function autoPull(manual){
   if($('v-log').classList.contains('active')){const d=$('lDate').value||yesterday();pullRange(d,d,manual)}
   else if($('v-rep').classList.contains('active')){pullRange($('rFrom').value,$('rTo').value,manual)}}
@@ -690,22 +750,97 @@ $('btnPullLog').onclick=()=>autoPull(true);$('btnPullRep').onclick=()=>autoPull(
 $('btnPullLists').onclick=async()=>{try{const j=await post({getLists:1});applyLists(j.lists||{});updateSyncPill();toast('اتحدّثت القوائم والأسعار من الشيت ✓')}catch(e){toast('فشل: '+(e.message||e))}};
 window.addEventListener('online',()=>sync());
 
-/* ================= التقييم ================= */
-const EV={defs:[],vals:{},dirty:{},month:''};
-function evKey(c,k){return c+'||'+k}
+/* ================= التقييم (نجوم يومية + إحصائيات الشهر) ================= */
+const EV={defs:[],vals:{},dirty:{},date:'',company:'',mode:'day'};
+function starsHtml(v,key){let s='<div class="stars" data-k="'+esc(key)+'">';for(let i=1;i<=5;i++)s+='<button type="button" data-v="'+i+'" class="'+(v>=i?'on':'')+'" aria-label="'+i+'">★</button>';return s+'</div>'}
+function evDirtyCheck(){return !Object.keys(EV.dirty).length||confirm('فيه تقييم ماتحفظش. تكمل وتسيبه؟')}
+function evGroups(){const g=[];EV.defs.forEach(d=>{if(g.indexOf(d[0])<0)g.push(d[0])});return g}
+function drawChips(){const cos=S.settings.lists.companies;if(!EV.company||cos.indexOf(EV.company)<0)EV.company=cos[0]||'';
+  $('eChips').innerHTML=cos.map(c=>{const col=colorOf(c);return '<span class="ochip'+(EV.company===c?' on':'')+'" data-co="'+esc(c)+'" style="border-color:'+col+';color:'+col+'">'+esc(c)+'</span>'}).join('');
+  $('eChips').querySelectorAll('.ochip').forEach(e=>e.onclick=()=>{if(e.dataset.co===EV.company||!evDirtyCheck())return;EV.company=e.dataset.co;loadEvalDay()})}
 async function renderEval(){
-  const m=$('eMonth');if(!m.value)m.value=todayStr().slice(0,7);EV.month=m.value;
-  $('eList').innerHTML='<div class="empty">بحمّل...</div>';
-  try{const j=await post({getEval:1,month:m.value});if(m.value!==EV.month)return;EV.defs=j.defs||[];EV.vals={};EV.dirty={};(j.values||[]).forEach(x=>EV.vals[evKey(x.company,x.key)]=x.value);drawEval()}
+  const d=$('eDate');if(!d.value)d.value=todayStr();EV.date=d.value;
+  if(!$('eMonth').value)$('eMonth').value=todayStr().slice(0,7);
+  fillSelect($('eStatCo'),S.settings.lists.companies,$('eStatCo').value,'كل المكاتب');
+  if(EV.mode==='day'){drawChips();loadEvalDay()}else loadEvalStats()}
+async function loadEvalDay(){
+  EV.date=$('eDate').value||todayStr();drawChips();
+  if(!EV.company){$('eList').innerHTML='<div class="empty">ضيف مكاتب الأول</div>';return}
+  const key=EV.date+'|'+EV.company;EV.key=key;$('eList').innerHTML='<div class="empty">بحمّل...</div>';
+  try{const j=await post({getEval:1,date:EV.date,company:EV.company});if(EV.key!==key)return;EV.defs=j.defs||[];EV.vals=j.values||{};EV.dirty={};drawEvalDay()}
   catch(e){$('eList').innerHTML='<div class="empty">تعذّر تحميل التقييم: '+esc(e.message||e)+'</div>'}}
-function drawEval(){
-  const groups=[];EV.defs.forEach(d=>{if(groups.indexOf(d[0])<0)groups.push(d[0])});
-  $('eList').innerHTML=S.settings.lists.companies.map(c=>'<div class="evc" style="border-right-color:'+colorOf(c)+'"><h4 style="color:'+colorOf(c)+'">● '+esc(c)+'</h4>'+groups.map(g=>'<div class="evg">'+esc(g)+'</div>'+EV.defs.filter(d=>d[0]===g).map(d=>{const k=g+'/'+d[1],v=EV.vals[evKey(c,k)];
-    return '<div class="evr"><span>'+esc(d[1])+'</span><input type="number" inputmode="decimal" min="0" step="any" data-c="'+esc(c)+'" data-k="'+esc(k)+'" value="'+(v==null?'':v)+'"></div>'}).join('')).join('')+'</div>').join('')||'<div class="empty">ضيف مكاتب الأول</div>';
-  $('eList').querySelectorAll('input').forEach(i=>i.oninput=()=>{EV.dirty[evKey(i.dataset.c,i.dataset.k)]={company:i.dataset.c,key:i.dataset.k,value:i.value===''?'':Number(i.value)}})}
-$('eMonth').onchange=()=>{if(Object.keys(EV.dirty).length&&!confirm('فيه تقييم ماتحفظش. تكمل وتسيبه؟')){$('eMonth').value=EV.month;return}renderEval()};
-$('btnEvalSave').onclick=async()=>{const items=Object.values(EV.dirty);if(!items.length){toast('مفيش تغيير يتحفظ');return}
-  try{const j=await post({setEval:1,month:EV.month,items});toast('اتحفظ التقييم ✓ ('+j.saved+')');await renderEval()}catch(e){toast('فشل الحفظ: '+(e.message||e))}};
+function drawEvalDay(){
+  const c=EV.company;
+  $('eList').innerHTML='<div class="evc" style="border-right-color:'+colorOf(c)+'"><h4 style="color:'+colorOf(c)+'">● '+esc(c)+' — '+EV.date.split('-').reverse().join('/')+'</h4>'+evGroups().map(g=>'<div class="evg">'+esc(g)+'</div>'+EV.defs.filter(d=>d[0]===g).map(d=>{const k=g+'/'+d[1];return '<div class="evr"><span>'+esc(d[1])+'</span>'+starsHtml(k in EV.dirty?EV.dirty[k]:EV.vals[k],k)+'</div>'}).join('')).join('')+'</div>';
+  $('eList').querySelectorAll('.stars').forEach(box=>box.querySelectorAll('button').forEach(b=>b.onclick=()=>{const k=box.dataset.k,v=Number(b.dataset.v),cur=k in EV.dirty?EV.dirty[k]:EV.vals[k];
+    EV.dirty[k]=cur===v?'':v;box.querySelectorAll('button').forEach(x=>x.classList.toggle('on',EV.dirty[k]!==''&&Number(x.dataset.v)<=EV.dirty[k]))}))}
+async function loadEvalStats(){
+  const m=$('eMonth').value||todayStr().slice(0,7);$('eList').innerHTML='<div class="empty">بحمّل...</div>';
+  try{const j=await post({getEvalStats:1,month:m});EV.defs=j.defs||[];const co=$('eStatCo').value;let rows=(j.rows||[]).filter(r=>!co||r.company===co);
+    if(!rows.length){$('eList').innerHTML='<div class="empty">مفيش تقييمات في الشهر ده'+(co?' للمكتب ده':'')+'</div>';return}
+    $('eList').innerHTML=rows.map(r=>{const ks=Object.keys(r.avg),all=ks.length?ks.reduce((s,k)=>s+r.avg[k],0)/ks.length:null;
+      return '<div class="evc" style="border-right-color:'+colorOf(r.company)+'"><h4 style="color:'+colorOf(r.company)+'">● '+esc(r.company)+' <span class="ro">('+r.days+' يوم متقيّم'+(all!=null?' — المتوسط '+all.toFixed(2)+' / 5':'')+')</span></h4>'+
+      evGroups().map(g=>'<div class="evg">'+esc(g)+'</div>'+EV.defs.filter(d=>d[0]===g).map(d=>{const k=g+'/'+d[1],v=r.avg[k];return '<div class="evr"><span>'+esc(d[1])+'</span>'+(v==null?'<span class="ro">—</span>':'<span style="display:flex;align-items:center;gap:8px">'+starsHtml(Math.round(v),k).replace(/<button/g,'<button disabled style="font-size:18px"')+'<b style="min-width:34px;text-align:center">'+v.toFixed(2)+'</b></span>')+'</div>'}).join('')).join('')+'</div>'}).join('')}
+  catch(e){$('eList').innerHTML='<div class="empty">تعذّر تحميل الإحصائيات: '+esc(e.message||e)+'</div>'}}
+document.querySelectorAll('[data-em]').forEach(b=>b.onclick=()=>{if(b.dataset.em===EV.mode)return;if(EV.mode==='day'&&!evDirtyCheck())return;EV.mode=b.dataset.em;
+  document.querySelectorAll('[data-em]').forEach(x=>x.classList.toggle('on',x===b));$('eDay').style.display=EV.mode==='day'?'block':'none';$('eMon').style.display=EV.mode==='mon'?'block':'none';renderEval()});
+$('eDate').onchange=()=>{if(!evDirtyCheck()){$('eDate').value=EV.date;return}loadEvalDay()};
+$('ePrev').onclick=()=>{if(!evDirtyCheck())return;$('eDate').value=addDays($('eDate').value||todayStr(),-1);loadEvalDay()};
+$('eNext').onclick=()=>{if(!evDirtyCheck())return;$('eDate').value=addDays($('eDate').value||todayStr(),1);loadEvalDay()};
+$('eMonth').onchange=loadEvalStats;$('eStatCo').onchange=loadEvalStats;
+$('btnEvalSave').onclick=async()=>{const items=Object.keys(EV.dirty).map(k=>({key:k,value:EV.dirty[k]}));if(!items.length){toast('مفيش تغيير يتحفظ');return}
+  try{const j=await post({setEval:1,date:EV.date,company:EV.company,items});toast('اتحفظ التقييم ✓');await loadEvalDay()}catch(e){toast('فشل الحفظ: '+(e.message||e))}};
+
+/* ================= إدارة المستخدمين (للمدير) ================= */
+const GROUPS=['HR','الامن','QC'];
+let USERS=[],newCode=null;
+async function loadUsers(){if(!isAdmin())return;try{const j=await post({listUsers:1});USERS=j.users||[];drawUsers()}catch(e){$('uList').innerHTML='<div class="empty">تعذّر تحميل المستخدمين: '+esc(e.message||e)+'</div>'}}
+function copyText(t){try{navigator.clipboard.writeText(t);toast('اتنسخ ✓')}catch(e){toast('انسخه بإيدك')}}
+function drawUsers(){
+  $('uCode').innerHTML=newCode?'<div class="codebox"><b>كود '+esc(newCode.name)+' (بيظهر مرة واحدة بس — ابعته له دلوقتي)</b><code>'+esc(newCode.code)+'</code><button class="btn sec small" id="uCopy">نسخ الكود</button> <button class="btn sec small" id="uHide">تم، اخفي</button></div>':'';
+  if(newCode){$('uCopy').onclick=()=>copyText(newCode.code);$('uHide').onclick=()=>{newCode=null;drawUsers()}}
+  $('uList').innerHTML=USERS.map(u=>{const me=u.name===S.userName;return '<div class="ubox'+(u.enabled?'':' off')+'" data-id="'+esc(u.id)+'"><div><span class="un">'+esc(u.name)+'</span><span class="bd">'+(u.role==='admin'?'مدير':'مستخدم')+'</span>'+(me?'<span class="ro">(أنت)</span>':'')+(u.enabled?'':'<span class="bd" style="background:#8884">موقوف</span>')+'</div>'+
+    '<div>'+(u.role==='admin'?'<span class="ro">المدير بيقيّم كل الأقسام</span>':'<span class="ro">يقيّم:</span>'+GROUPS.map(g=>'<label class="cb"><input type="checkbox" data-g="'+esc(g)+'"'+(u.evalGroups.indexOf(g)>=0?' checked':'')+'>'+esc(g)+'</label>').join(''))+'</div>'+
+    '<div class="acts">'+(me?'':'<button class="btn sec small" data-act="en">'+(u.enabled?'إيقاف':'تفعيل')+'</button>')+'<button class="btn sec small" data-act="role"'+(me?' disabled':'')+'>'+(u.role==='admin'?'خليه مستخدم':'خليه مدير')+'</button><button class="btn sec small" data-act="rc">كود جديد</button>'+(me?'':'<button class="btn danger small" data-act="del">مسح</button>')+'</div></div>'}).join('')||'<div class="empty">مفيش مستخدمين</div>';
+  $('uList').querySelectorAll('.ubox').forEach(box=>{const u=USERS.find(x=>x.id===box.dataset.id);
+    const save=async(patch,msg)=>{try{const j=await post({saveUser:1,user:Object.assign({id:u.id,role:u.role,enabled:u.enabled,evalGroups:u.evalGroups},patch)});toast(msg||'اتحفظ ✓');await loadUsers()}catch(e){toast(e.message||e);loadUsers()}};
+    box.querySelectorAll('[data-g]').forEach(c=>c.onchange=()=>save({evalGroups:Array.from(box.querySelectorAll('[data-g]:checked')).map(x=>x.dataset.g)},'اتحدّثت صلاحية التقييم ✓'));
+    box.querySelectorAll('[data-act]').forEach(b=>b.onclick=async()=>{const a=b.dataset.act;
+      if(a==='en'){if(u.enabled&&!await ask('إيقاف '+u.name+'؟','مش هيعرف يدخل لحد ما تفعّله تاني.','أوقفه','لا'))return;save({enabled:!u.enabled},u.enabled?'اتوقف':'اتفعّل ✓')}
+      else if(a==='role'){if(!await ask('تغيير الصلاحية','هتخلّي '+u.name+(u.role==='admin'?' مستخدم عادي':' مدير (يشوف الأسعار ويدير المستخدمين)')+'؟','تمام','لا'))return;save({role:u.role==='admin'?'user':'admin'},'اتغيّرت الصلاحية ✓')}
+      else if(a==='rc'){if(!await ask('كود جديد لـ '+u.name,'الكود القديم هيبطل فوراً وهيتولّد كود جديد يظهر مرة واحدة.','ولّد كود','لا'))return;
+        try{const j=await post({resetCode:1,id:u.id});newCode={name:u.name,code:j.code};drawUsers();if(j.self){S.settings.code=j.code;save();toast('ده كودك إنت — اتحدّث على الجهاز ده')}}catch(e){toast(e.message||e)}}
+      else if(a==='del'){if(!await ask('مسح '+u.name+'؟','هيتمسح حسابه (تسجيلاته القديمة تفضل في الشيت).','امسح','لا'))return;try{await post({deleteUser:1,id:u.id});toast('اتمسح');loadUsers()}catch(e){toast(e.message||e)}}})});
+}
+/* ================= قفل التطبيق (اختياري، على الجهاز بس) ================= */
+async function lkHash(salt,pw){const t=salt+'|'+pw;
+  try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+  catch(e){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<t.length;i++){const c=t.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return 'f'+(4294967296*(2097151&h2)+(h1>>>0)).toString(16)}}
+async function lkCheck(pw){return !!S.lock&&await lkHash(S.lock.salt,pw)===S.lock.hash}
+async function lkSet(pw){const salt=Math.random().toString(36).slice(2)+Date.now().toString(36);S.lock={salt,hash:await lkHash(salt,pw)};save()}
+function lkDraw(){$('lockOff').style.display=S.lock?'none':'block';$('lockOn').style.display=S.lock?'block':'none';
+  if(S.lock){$('lkNew').value=$('lkNew2').value=''}}
+function lkApply(){document.body.classList.toggle('applock',!!S.lock&&lkLocked);if(S.lock&&lkLocked)setTimeout(()=>{try{$('lkPw').focus()}catch(e){}},50)}
+let lkLocked=!!S.lock,lkFails=0,lkWait=0,lkHiddenAt=0;
+$('lkSave').onclick=async()=>{const a=$('lkNew').value,b=$('lkNew2').value;if(a.length<4)return toast('كلمة السر 4 حروف أو أرقام على الأقل');if(a!==b)return toast('الكلمتين مش متطابقتين');
+  await lkSet(a);lkLocked=false;lkDraw();toast('القفل اتفعّل ✓ — افتكر الكلمة')};
+$('lkChange').onclick=async()=>{const cur=$('lkCur').value,a=$('lkNew').value;
+  if(!await lkCheck(cur))return toast('كلمة السر الحالية غلط');
+  if($('lockOff').style.display==='none'){$('lockOff').style.display='block';$('lkSave').textContent='حفظ الكلمة الجديدة';$('lkSave').onclick=async()=>{const x=$('lkNew').value,y=$('lkNew2').value;if(x.length<4)return toast('4 حروف على الأقل');if(x!==y)return toast('الكلمتين مش متطابقتين');await lkSet(x);$('lkCur').value='';$('lkSave').textContent='تفعيل القفل';lkDraw();toast('اتغيّرت كلمة السر ✓')};toast('اكتب الكلمة الجديدة وأكّدها وبعدين احفظ')}};
+$('lkRemove').onclick=async()=>{if(!await lkCheck($('lkCur').value))return toast('كلمة السر الحالية غلط');S.lock=null;save();$('lkCur').value='';lkLocked=false;lkDraw();lkApply();toast('القفل اتلغى')};
+async function lkTry(){if(Date.now()<lkWait){$('lkErr').textContent='استنى '+Math.ceil((lkWait-Date.now())/1000)+' ثانية';return}
+  if(await lkCheck($('lkPw').value)){lkFails=0;lkLocked=false;$('lkPw').value='';$('lkErr').textContent='';lkApply()}
+  else{lkFails++;$('lkPw').value='';if(lkFails>=3)lkWait=Date.now()+Math.min(60,5*(lkFails-2))*1000;$('lkErr').textContent='كلمة السر غلط'}}
+$('lkOpen').onclick=lkTry;$('lkPw').addEventListener('keydown',e=>{if(e.key==='Enter')lkTry()});
+$('lkForgot').onclick=()=>{if(!confirm('لو نسيت الكلمة لازم نمسح بيانات التطبيق من الجهاز ده (وأي تسجيل ماتبعتش للشيت هيضيع) وتدخل بالكود من أول. تكمل؟'))return;
+  const url=S.settings.url;S={role:'',userName:'',evalGroups:[],sheetOnly:[],records:[],pendingDel:[],settings:JSON.parse(JSON.stringify(DEF)),lastForm:null};S.settings.url=url;
+  try{localStorage.setItem(LS_KEY,JSON.stringify(S))}catch(e){}location.reload()};
+document.addEventListener('visibilitychange',()=>{if(document.hidden){lkHiddenAt=Date.now()}else if(S.lock&&lkHiddenAt&&Date.now()-lkHiddenAt>30000){lkLocked=true;lkApply()}});
+lkApply();lkDraw();
+
+$('uAdd').onclick=async()=>{const name=$('uName').value.trim();if(!name)return toast('اكتب الاسم');
+  try{const j=await post({saveUser:1,user:{name,role:$('uRole').value,enabled:true,evalGroups:Array.from(document.querySelectorAll('#uGroups [data-g]:checked')).map(x=>x.dataset.g)}});
+    newCode={name,code:j.code};$('uName').value='';document.querySelectorAll('#uGroups [data-g]').forEach(x=>x.checked=false);await loadUsers()}catch(e){toast(e.message||e)}};
 
 /* ================= نسخة احتياطية ================= */
 $('btnBackup').onclick=()=>{const blob=new Blob([JSON.stringify({app:'work-labor',version:1,savedAt:new Date().toISOString(),data:S},null,1)],{type:'application/json'});
