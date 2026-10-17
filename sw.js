@@ -1,5 +1,5 @@
 // نسخة التخزين: غيّر الرقم لما تنزّل تحديث جديد عشان الأجهزة تاخد النسخة الجديدة
-const VERSION = 'labor-v12';
+const VERSION = 'labor-v13';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

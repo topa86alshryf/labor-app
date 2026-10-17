@@ -640,7 +640,7 @@ $('btnAddRate').onclick=()=>{const h=parseFloat(prompt('عدد الساعات ا
   if(curOffice)(S.settings.officeRates[curOffice]=S.settings.officeRates[curOffice]||{})[h]=c;else S.settings.rates[h]=c;touchPricing();renderPricing();renderForm()};
 
 /* ================= المزامنة مع الشيت ================= */
-let syncing=false,pTimer;
+let syncing=false,pTimer,syncGen=0;
 function touchPricing(){S.pricingDirty=true;S.pricingVer=(S.pricingVer||0)+1;save();updateSyncPill();clearTimeout(pTimer);pTimer=setTimeout(()=>sync(),1500)}
 function pricingPayload(){const s=S.settings;return {lists:s.lists,rates:s.rates,officeRates:s.officeRates,officePenalty:s.officePenalty,penaltyBase:s.penaltyBase,penaltyPct:s.penaltyPct}}
 async function post(payload){
@@ -680,7 +680,7 @@ async function sync(manual){
     }
     if(manual)toast('اتبعت للشيت ✓');
   }catch(e){if(manual)toast('مقدرش يبعت: '+(e.message||e)+' — هيفضل معلّق');if(/مقفول/.test(e.message||''))setTimeout(()=>sync(),70000)}   // الدخول مقفول مؤقتاً: نحاول تاني لوحدنا
-  syncing=false;updateSyncPill();if($('v-log').classList.contains('active'))renderLog();
+  syncing=false;syncGen++;updateSyncPill();if($('v-log').classList.contains('active'))renderLog();
   resolveConflicts();
 }
 let resolving=false;
@@ -721,15 +721,18 @@ function mergePulled(a,z,rows){
   const pend={};S.records.forEach(r=>{if(!r.synced)pend[r.id]=1});
   const keep=S.records.filter(r=>!(r.date>=a&&r.date<=z&&r.synced));
   const add=[],only=[];
-  rows.forEach((x,i)=>{if(/^r#/.test(x.id)){only.push(Object.assign({synced:true,ts:i},x))}else if(!pend[x.id]){add.push(Object.assign({synced:true,ts:i},x))}});
+  const gone={};(S.pendingDel||[]).forEach(id=>gone[id]=1);
+  rows.forEach((x,i)=>{if(/^r#/.test(x.id)){only.push(Object.assign({synced:true,ts:i},x))}else if(!pend[x.id]&&!gone[x.id]){add.push(Object.assign({synced:true,ts:i},x))}});
   S.records=keep.concat(add);S.sheetOnly=(S.sheetOnly||[]).filter(r=>!(r.date>=a&&r.date<=z)).concat(only);save();
 }
 async function pullRange(a,z,manual){
   if(needLogin()||!a||!z)return;
   if(!isAdmin()&&(Date.parse(z)-Date.parse(a))/864e5>60)return;
-  const key=a+'|'+z;if(!manual&&key===pullKey&&Date.now()-pullAt<20000)return;pullKey=key;pullAt=Date.now();
+  if(syncing){setTimeout(()=>pullRange(a,z,manual),700);return}
+  const key=a+'|'+z;if(!manual&&key===pullKey&&Date.now()-pullAt<20000)return;pullKey=key;pullAt=Date.now();const gen0=syncGen;
   document.querySelectorAll('.pullbtn').forEach(b=>b.classList.add('busy'));
-  try{const j=await post({getRecords:1,from:a,to:z});mergePulled(a,z,j.records||[]);const t=new Date();document.querySelectorAll('.pullat').forEach(e=>e.textContent='آخر تحديث '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0'));
+  try{const j=await post({getRecords:1,from:a,to:z});if(gen0!==syncGen||syncing){pullKey='';setTimeout(()=>pullRange(a,z,manual),900);document.querySelectorAll('.pullbtn').forEach(b=>b.classList.remove('busy'));return}
+    mergePulled(a,z,j.records||[]);const t=new Date();document.querySelectorAll('.pullat').forEach(e=>e.textContent='آخر تحديث '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0'));
     if($('v-log').classList.contains('active'))renderLog();if($('v-rep').classList.contains('active'))renderRep();if(manual)toast('اتحدّث من الشيت ✓ ('+(j.records||[]).length+' تسجيل)')}
   catch(e){if(manual)toast('فشل التحديث: '+(e.message||e))}
   document.querySelectorAll('.pullbtn').forEach(b=>b.classList.remove('busy'))}
