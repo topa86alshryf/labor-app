@@ -229,9 +229,12 @@ body.applock #lockscr{display:flex}body.applock .wrap,body.applock .tabbar,body.
       <div class="admin-only"><label class="l">تكلفة اليوم (ج)</label><input type="number" inputmode="decimal" id="fCostManual" placeholder="مثلاً 250"></div></div>
       <p class="note" id="otherNote"></p>
     </div>
+    <button type="button" class="btn sec" id="btnDelay" style="margin-top:12px;text-align:center">＋ عمال مجازة</button>
+    <div id="delayBox" style="display:none">
     <label class="l">عدد عمال مجازة</label>
     <div class="stepper"><button type="button" data-step="delayed" data-d="-1">−</button><input type="number" inputmode="numeric" min="0" id="fDelayed" placeholder="0"><button type="button" data-step="delayed" data-d="1">+</button></div>
     <div class="admin-only"><label class="l">نسبة خصم % <span class="ro">(اختياري — فاضي = النسبة الافتراضية للمكتب)</span></label><input type="number" inputmode="decimal" min="0" max="100" step="any" id="fDisc" placeholder="مثلاً 25"></div>
+    </div>
     <p class="note user-only">تقدر تعدّل أو تمسح تسجيلاتك خلال يومين من وقت التسجيل بس.</p>
     <label class="l">ملاحظات</label><textarea id="fNotes" placeholder="اختياري"></textarea>
     </div>
@@ -270,17 +273,13 @@ body.applock #lockscr{display:flex}body.applock .wrap,body.applock .tabbar,body.
     </div>
     <p class="note" id="rWarn"></p>
   </div>
-  <div class="card" style="margin-top:0"><h2>ملخص المكاتب</h2><div class="tscroll"><table id="tOff"></table></div></div>
+  <div class="card" style="margin-top:0"><h2>كل الإدارات</h2><div class="tscroll"><table id="tDept"></table></div></div>
   <div class="card" style="margin-top:0"><h2>تقرير الإدارات</h2>
     <p class="note" style="margin-top:0">كام عامل احتاجته كل إدارة وتكلفتهم، في الفترة (من/إلى) اللي فوق.</p>
     <label class="l">الإدارة</label><select id="rDept"></select>
-    <div class="kpis" style="margin-top:12px">
-      <div class="kpi"><b id="dWorkers">0</b><span>إجمالي العمالة (عامل/يوم)</span></div><div class="kpi"><b id="dAvg">0</b><span>متوسط العمالة في اليوم</span></div>
-      <div class="kpi"><b id="dPeak">0</b><span id="dPeakL">أعلى يوم</span></div><div class="kpi"><b id="dCost">0</b><span>التكلفة (ج)</span></div>
-    </div>
     <div class="tscroll" style="margin-top:12px"><table id="tDeptOff"></table></div>
-    <h3 style="margin:16px 0 6px;font-size:15px">كل الإدارات</h3><div class="tscroll"><table id="tDept"></table></div>
   </div>
+  <div class="card" style="margin-top:0"><h2>ملخص المكاتب</h2><div class="tscroll"><table id="tOff"></table></div></div>
   <div class="card" style="margin-top:0"><label class="l" style="margin-top:0">إظهار فاتورة لمكتب</label><select id="rCompany"></select></div>
   <div class="card invcard" style="margin-top:0"><div class="printhead" id="printHead"></div><h2 id="invTitle">فاتورة المكتب</h2><div class="tscroll"><table id="tInv"></table></div>
     <div id="invSum" style="margin-top:10px;font-weight:800;font-size:14px"></div>
@@ -435,7 +434,7 @@ $('btnTheme').onclick=()=>{const d=document.documentElement.classList.toggle('da
 
 /* ================= نموذج التسجيل ================= */
 const yesterday=()=>addDays(todayStr(),-1);
-const F={date:yesterday(),company:'',dept:'',shift:'',type:'',count:'',hours:8,delayed:'',disc:'',notes:'',editing:null};
+const F={openDelay:false,date:yesterday(),company:'',dept:'',shift:'',type:'',count:'',hours:8,delayed:'',disc:'',notes:'',editing:null};
 function fillSelect(sel,arr,cur,ph){sel.innerHTML=(ph?'<option value="">'+ph+'</option>':'')+arr.map(x=>'<option'+(x===cur?' selected':'')+'>'+esc(x)+'</option>').join('')}
 function renderSeg(el,arr,cur,on){el.innerHTML=arr.map(x=>'<button type="button" class="'+(String(x)===String(cur)?'on':'')+'" data-v="'+esc(x)+'">'+esc(x)+'</button>').join('');
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>on(b.dataset.v))}
@@ -453,6 +452,8 @@ function renderForm(){
   $('fHours').innerHTML=hs.map(h=>'<button type="button" class="'+(F.hours===h?'on':'')+'" data-h="'+h+'">'+h+' س</button>').join('')+'<button type="button" class="'+(F.hours==='other'?'on':'')+'" data-h="other">أخرى</button>';
   $('fHours').querySelectorAll('button').forEach(b=>b.onclick=()=>{F.hours=b.dataset.h==='other'?'other':Number(b.dataset.h);renderForm()});
   $('otherBox').style.display=F.hours==='other'?'block':'none';
+  $('delayBox').style.display=F.openDelay?'block':'none';
+  {const dn=Number(F.delayed)||0;$('btnDelay').textContent=F.openDelay?'− إخفاء عمال مجازة':(dn?'＋ عمال مجازة ('+dn+')':'＋ عمال مجازة')}
   $('fDate').value=F.date;$('fCount').value=F.count;$('fDelayed').value=F.delayed;$('fDisc').value=F.disc;$('fNotes').value=F.notes;
   $('formTitle').textContent=F.editing?'تعديل تسجيل':'تسجيل جديد';
   $('btnSave').textContent=F.editing?'حفظ التعديل':'حفظ';
@@ -474,7 +475,8 @@ function updatePreview(){
 }
 function readForm(){F.date=$('fDate').value;F.company=$('fCompany').value;F.dept=$('fDept').value;F.count=$('fCount').value;F.delayed=$('fDelayed').value;F.disc=$('fDisc').value;F.notes=$('fNotes').value}
 ['fDate','fCompany','fDept','fCount','fDelayed','fDisc','fNotes','fHoursOther','fCostManual'].forEach(id=>$(id).addEventListener('input',()=>{readForm();updatePreview();if(id==='fDate')applyRole();$('formWarn').style.display='none'}));
-$('fCompany').addEventListener('change',()=>{readForm();renderForm()});
+$('fCompany').addEventListener('change',()=>{readForm();F.openDelay=false;F.delayed='';F.disc='';renderForm()});
+$('btnDelay').onclick=()=>{readForm();F.openDelay=!F.openDelay;renderForm();if(F.openDelay)setTimeout(()=>{try{$('fDelayed').focus()}catch(e){}},50)};
 document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{const el=$(b.dataset.step==='count'?'fCount':'fDelayed');el.value=Math.max(0,(Number(el.value)||0)+Number(b.dataset.d));readForm();updatePreview()});
 
 function buildRecord(){
@@ -500,15 +502,15 @@ $('btnSave').onclick=async()=>{
   S.lastForm={company:r.company,dept:r.dept,shift:r.shift,type:r.type,hours:r.manualCost?'other':r.hours,count:r.count};
   if(!save())return;
   const wasEdit=!!F.editing;
-  F.editing=null;F.count='';F.delayed='';F.disc='';F.notes='';$('fHoursOther').value='';$('fCostManual').value='';
+  F.editing=null;F.openDelay=false;F.count='';F.delayed='';F.disc='';F.notes='';$('fHoursOther').value='';$('fCostManual').value='';
   if(costFor(r.hours,r.company)==null)F.hours=hoursOptions(r.company)[0]||8;
   renderForm();toast(wasEdit?'اتحفظ التعديل ✓':'اتسجّل ✓ — '+r.company+' / '+r.dept+' / '+r.count+' عامل');
   updateSyncPill();sync();
 };
-$('btnCancelEdit').onclick=()=>{F.editing=null;F.count='';F.delayed='';F.disc='';F.notes='';renderForm()};
+$('btnCancelEdit').onclick=()=>{F.editing=null;F.openDelay=false;F.count='';F.delayed='';F.disc='';F.notes='';renderForm()};
 
 function editRecord(id){const r=S.records.find(x=>x.id===id);if(!r)return;
-  Object.assign(F,{date:r.date,company:r.company,dept:r.dept,shift:r.shift,type:r.type,count:r.count,delayed:r.delayed||'',disc:r.discount!=null?Math.round(r.discount*10000)/100:'',notes:r.notes||'',editing:id});
+  Object.assign(F,{date:r.date,company:r.company,dept:r.dept,shift:r.shift,type:r.type,count:r.count,delayed:r.delayed||'',disc:r.discount!=null?Math.round(r.discount*10000)/100:'',notes:r.notes||'',editing:id,openDelay:!!(r.delayed||r.discount!=null)});
   if(r.manualCost){F.hours='other';$('fHoursOther').value=r.hours;$('fCostManual').value=r.cost}else{F.hours=r.hours;}
   show('entry');renderForm();}
 
@@ -577,9 +579,6 @@ function renderDept(rs,a,z){
     const w=x.reduce((s,r)=>s+(Number(r.count)||0),0);
     return {w,days:days.length,avg:days.length?w/days.length:0,pk,pd,a:x.reduce((s,r)=>s+recTotal(r),0),p:x.reduce((s,r)=>s+recPen(r),0)}};
   const sel=$('rDept').value,x=sel?rs.filter(r=>dn(r)===sel):rs,st=stat(x);
-  $('dWorkers').textContent=st.w;$('dAvg').textContent=(Math.round(st.avg*10)/10).toString();$('dPeak').textContent=st.pk;
-  $('dPeakL').textContent=st.pd?'أعلى يوم ('+st.pd.slice(8)+'/'+st.pd.slice(5,7)+')':'أعلى يوم';
-  $('dCost').textContent=fmt(st.a);
   const offs=S.settings.lists.companies.slice();x.forEach(r=>{if(offs.indexOf(r.company)<0)offs.push(r.company)});
   const orows=offs.map(c=>{const q=x.filter(r=>r.company===c);return {c,s:stat(q)}}).filter(o=>o.s.w>0);
   $('tDeptOff').innerHTML='<thead><tr><th>'+(sel?esc(sel)+' — ':'')+'المكتب</th><th>العمالة</th><th>أيام</th><th>متوسط/يوم</th><th>التكلفة</th></tr></thead><tbody>'+
