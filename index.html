@@ -122,7 +122,7 @@ body.applock #lockscr{display:flex}body.applock .wrap,body.applock .tabbar,body.
 .btn.pullbtn.busy{opacity:.7}
 .stars{display:flex;gap:2px;direction:ltr}.stars button{border:none;background:none;font-size:26px;line-height:1;padding:2px 3px;color:var(--border);cursor:pointer}.stars button.on{color:#F5A700}
 .evm{display:flex;gap:6px;margin-bottom:10px}.evm button{flex:1}
-.ubox{border:1.5px solid var(--border);border-radius:14px;padding:10px 12px;margin-bottom:10px;background:var(--field)}.ubox .un{font-weight:800;font-size:15px}.ubox .bd{display:inline-block;font-size:11.5px;border-radius:10px;padding:2px 8px;background:var(--accent-soft);color:var(--accent);margin-right:6px}.ubox.off{opacity:.6}
+.ubox{border:1.5px solid var(--border);border-radius:14px;padding:10px 12px;margin-bottom:10px;background:var(--field)}.ubox .un{font-weight:800;font-size:15px}.ubox .bd{display:inline-block;font-size:11.5px;border-radius:10px;padding:2px 8px;background:var(--accent-soft);color:var(--accent);margin-right:6px}.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-left:7px;vertical-align:middle}.dot.on{background:#16A34A;box-shadow:0 0 0 3px #16A34A33}.dot.off{background:#DC2626;box-shadow:0 0 0 3px #DC262633}
 .ubox label.cb{display:inline-flex;align-items:center;gap:4px;margin:6px 0 0 12px;font-size:13px}.ubox .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .codebox{border:2px dashed var(--accent);border-radius:14px;padding:12px;background:var(--accent-soft);margin-bottom:10px}.codebox code{display:block;direction:ltr;font-size:20px;font-weight:800;letter-spacing:1px;text-align:center;margin:8px 0;user-select:all}
 #whoami{margin-top:10px;padding:9px 12px;border-radius:12px;background:var(--rose);font-size:13.5px;font-weight:700;color:var(--accent)}
@@ -239,7 +239,7 @@ body.applock #lockscr{display:flex}body.applock .wrap,body.applock .tabbar,body.
     <div class="preview admin-only"><div><b id="pCost">—</b><span>تكلفة اليوم</span></div><div><b id="pTotal">—</b><span>الإجمالي</span></div><div><b id="pPen">—</b><span>الخصم</span></div></div>
     <div class="warnbox" id="formWarn"></div>
     <button class="btn" id="btnSave">حفظ</button>
-    <div class="row2"><button class="btn sec" id="btnCopyLast">نسخ من آخر تسجيل</button><button class="btn sec" id="btnClear">مسح الحقول</button></div>
+    
     <button class="btn danger" id="btnCancelEdit" style="display:none">إلغاء التعديل</button>
     </div>
   </div>
@@ -252,7 +252,7 @@ body.applock #lockscr{display:flex}body.applock .wrap,body.applock .tabbar,body.
     <label class="l">المكتب</label><select id="lCompany"></select>
     <button class="btn pullbtn" id="btnPullLog">🔄 تحديث من الشيت<small>اضغط عشان تشوف تسجيلات باقي المستخدمين — <span class="pullat">لسه ماتحدّثش</span></small></button>
     <p class="note user-only" style="margin:8px 0 0">تقدر تعدّل أو تمسح تسجيلاتك خلال يومين فقط من وقت تسجيلها.</p>
-    <div class="ochips" id="lChips"></div>
+    
     <div class="kpis" style="margin-top:12px"><div class="kpi"><b id="lWorkers">0</b><span>عمالة اليوم</span></div><div class="kpi admin-only"><b id="lAmount">0</b><span>المبلغ (ج)</span></div></div>
   </div>
   <div class="card" style="margin-top:0"><div id="lList"></div></div>
@@ -264,7 +264,6 @@ body.applock #lockscr{display:flex}body.applock .wrap,body.applock .tabbar,body.
     <div class="grid2"><div><label class="l">من</label><input type="date" id="rFrom"></div><div><label class="l">إلى</label><input type="date" id="rTo"></div></div>
     <button class="btn pullbtn" id="btnPullRep">🔄 تحديث من الشيت<small>اضغط عشان يتحسب التقرير من آخر بيانات في الشيت — <span class="pullat">لسه ماتحدّثش</span></small></button>
     <div class="seg" style="margin-top:8px"><button type="button" data-q="month">الشهر ده</button><button type="button" data-q="prev">الشهر اللي فات</button><button type="button" data-q="w">آخر 7 أيام</button></div>
-    <label class="l">المكتب (للفاتورة اليومية)</label><select id="rCompany"></select>
     <div class="kpis" style="margin-top:12px">
       <div class="kpi"><b id="rWorkers">0</b><span>إجمالي العمالة</span></div><div class="kpi"><b id="rAmount">0</b><span>إجمالي المبلغ</span></div>
       <div class="kpi"><b id="rPen">0</b><span>الخصومات</span></div><div class="kpi"><b id="rNet">0</b><span>الصافي بعد الخصم</span></div>
@@ -282,6 +281,7 @@ body.applock #lockscr{display:flex}body.applock .wrap,body.applock .tabbar,body.
     <div class="tscroll" style="margin-top:12px"><table id="tDeptOff"></table></div>
     <h3 style="margin:16px 0 6px;font-size:15px">كل الإدارات</h3><div class="tscroll"><table id="tDept"></table></div>
   </div>
+  <div class="card" style="margin-top:0"><label class="l" style="margin-top:0">إظهار فاتورة لمكتب</label><select id="rCompany"></select></div>
   <div class="card invcard" style="margin-top:0"><div class="printhead" id="printHead"></div><h2 id="invTitle">فاتورة المكتب</h2><div class="tscroll"><table id="tInv"></table></div>
     <div id="invSum" style="margin-top:10px;font-weight:800;font-size:14px"></div>
     <div class="row2"><button class="btn sec" id="btnPrint">طباعة / حفظ PDF</button><button class="btn sec" id="btnCopyRep">نسخ كنص</button></div></div>
@@ -314,7 +314,6 @@ body.applock #lockscr{display:flex}body.applock .wrap,body.applock .tabbar,body.
     <button type="button" class="btn instbtn" style="display:none">تثبيت دلوقتي</button>
     <div class="instsw"></div></div>
     <button class="btn sec admin-only" id="btnPullLists">جلب القوائم والأسعار من الشيت</button>
-    <button class="btn danger" id="btnLogout">تسجيل الخروج من الجهاز</button>
     <p class="note" id="syncNote"></p></div>
   <div class="card" style="margin-top:0"><h2>🔒 قفل التطبيق بكلمة سر</h2>
     <p class="note" style="margin-top:0">اختياري: لو حابب تحمي التطبيق من العبث على جهازك، حط كلمة سر (من غير اسم) والتطبيق هيطلبها كل مرة تفتحه أو ترجع له. الكلمة محفوظة على الجهاز ده بس، ومحدش غيرك يعرفها.</p>
@@ -341,10 +340,8 @@ body.applock #lockscr{display:flex}body.applock .wrap,body.applock .tabbar,body.
     <button class="btn sec" id="btnAddRate">+ سعر ساعات جديد</button>
     <div class="grid2"><div><label class="l">أساس الخصم (ج)</label><input type="number" id="sPenBase" inputmode="decimal"></div><div><label class="l">نسبة الخصم الافتراضية</label><input type="number" id="sPenPct" step="0.05" inputmode="decimal"></div></div>
     <p class="note">الخصم = أساس الخصم × النسبة × عدد عمال مجازة (والنسبة ممكن تتغير لكل تسجيل).<br>أي تعديل هنا (قوائم أو أسعار أو خصم) بيتبعت للشيت تلقائي، والشيت هو اللي بيحسب المبلغ النهائي.</p></div>
-  <div class="card" style="margin-top:0"><h2>نسخة احتياطية</h2>
-    <div class="row2"><button class="btn sec" id="btnBackup">حفظ نسخة (ملف)</button><button class="btn sec" id="btnRestore">استعادة من ملف</button></div>
-    <input type="file" id="fileRestore" accept=".json,application/json,text/plain" style="display:none">
-    <p class="note" id="bkNote"></p></div>
+  <div class="card" style="margin-top:0"><button class="btn danger" id="btnLogout">تسجيل الخروج من الجهاز</button>
+    <p class="note">بيمسح الكود وبيانات التطبيق من الجهاز ده. أي تسجيل لسه ماتبعتش للشيت هيضيع.</p></div>
 </section>
 </div>
 
@@ -508,9 +505,6 @@ $('btnSave').onclick=async()=>{
   renderForm();toast(wasEdit?'اتحفظ التعديل ✓':'اتسجّل ✓ — '+r.company+' / '+r.dept+' / '+r.count+' عامل');
   updateSyncPill();sync();
 };
-$('btnCopyLast').onclick=()=>{const l=S.lastForm;if(!l)return toast('مفيش تسجيل سابق');
-  F.company=l.company;F.dept=l.dept;F.shift=l.shift;F.type=l.type;F.hours=(l.hours==='other'||costFor(l.hours,l.company)==null)?hoursOptions(l.company)[0]||8:l.hours;F.count=l.count;renderForm();toast('اتنسخت بيانات آخر تسجيل — راجع العدد')};
-$('btnClear').onclick=()=>{F.count='';F.delayed='';F.disc='';F.notes='';F.company='';F.dept='';F.editing=null;$('fHoursOther').value='';$('fCostManual').value='';renderForm()};
 $('btnCancelEdit').onclick=()=>{F.editing=null;F.count='';F.delayed='';F.disc='';F.notes='';renderForm()};
 
 function editRecord(id){const r=S.records.find(x=>x.id===id);if(!r)return;
@@ -526,9 +520,6 @@ function renderLog(){
   const seen={},dayAll=allRecs().filter(r=>r.date===d&&!seen[r.id]&&(seen[r.id]=1));
   const list=dayAll.filter(r=>!co||r.company===co).sort((a,b)=>(a.ts||0)-(b.ts||0));
   $('lWorkers').textContent=list.reduce((s,r)=>s+(Number(r.count)||0),0);$('lAmount').textContent=fmt(list.reduce((s,r)=>s+recTotal(r),0));
-  $('lChips').innerHTML=S.settings.lists.companies.map(c=>{const n=dayAll.filter(r=>r.company===c).reduce((s,r)=>s+(Number(r.count)||0),0);const col=colorOf(c);
-    return '<span class="ochip'+(n?'':' zero')+(co===c?' on':'')+'" data-co="'+esc(c)+'" style="border-color:'+col+';color:'+col+'">'+esc(c)+' · '+(n||'لا يوجد')+'</span>'}).join('');
-  $('lChips').querySelectorAll('.ochip').forEach(e=>e.onclick=()=>{$('lCompany').value=$('lCompany').value===e.dataset.co?'':e.dataset.co;renderLog()});
   $('lList').innerHTML=list.length?list.map(r=>{const ed=canEdit(r);return '<div class="rec" data-id="'+esc(r.id)+'" style="border-right:6px solid '+colorOf(r.company)+';background:color-mix(in srgb,'+colorOf(r.company)+' 10%,var(--field))"><div class="top"><span style="color:'+colorOf(r.company)+'">● '+esc(r.company)+'</span><span>'+r.count+' عامل × '+r.hours+' س</span></div>'+
     '<div class="mid">'+esc(r.dept)+' · '+esc(r.shift)+' · '+esc(r.type)+(r.delayed?' · مجازة '+r.delayed:'')+(r.notes?' · '+esc(r.notes):'')+'</div>'+
     '<div class="bot"><span>'+(isAdmin()?'<b>'+(recCost(r)==null?'تكلفة ناقصة':fmt(recTotal(r))+' ج')+'</b>'+(r.delayed?' <span style="color:var(--accent)">خصم '+fmt(recPen(r))+'</span>':''):'')+(r.by?' <span style="color:var(--faint);font-size:12px">· '+esc(r.by)+'</span>':'')+'</span>'+
@@ -689,7 +680,7 @@ async function sync(manual){
       S.pendingDel=S.pendingDel.filter(id=>dels.indexOf(id)<0);save();
     }
     if(manual)toast('اتبعت للشيت ✓');
-  }catch(e){if(manual)toast('مقدرش يبعت: '+(e.message||e)+' — هيفضل معلّق')}
+  }catch(e){if(manual)toast('مقدرش يبعت: '+(e.message||e)+' — هيفضل معلّق');if(/مقفول/.test(e.message||''))setTimeout(()=>sync(),70000)}   // الدخول مقفول مؤقتاً: نحاول تاني لوحدنا
   syncing=false;updateSyncPill();if($('v-log').classList.contains('active'))renderLog();
   resolveConflicts();
 }
@@ -799,7 +790,7 @@ function copyText(t){try{navigator.clipboard.writeText(t);toast('اتنسخ ✓'
 function drawUsers(){
   $('uCode').innerHTML=newCode?'<div class="codebox"><b>كود '+esc(newCode.name)+' (بيظهر مرة واحدة بس — ابعته له دلوقتي)</b><code>'+esc(newCode.code)+'</code><button class="btn sec small" id="uCopy">نسخ الكود</button> <button class="btn sec small" id="uHide">تم، اخفي</button></div>':'';
   if(newCode){$('uCopy').onclick=()=>copyText(newCode.code);$('uHide').onclick=()=>{newCode=null;drawUsers()}}
-  $('uList').innerHTML=USERS.map(u=>{const me=u.name===S.userName;return '<div class="ubox'+(u.enabled?'':' off')+'" data-id="'+esc(u.id)+'"><div><span class="un">'+esc(u.name)+'</span><span class="bd">'+(u.role==='admin'?'مدير':'مستخدم')+'</span>'+(me?'<span class="ro">(أنت)</span>':'')+(u.enabled?'':'<span class="bd" style="background:#8884">موقوف</span>')+'</div>'+
+  $('uList').innerHTML=USERS.map(u=>{const me=u.name===S.userName;return '<div class="ubox" data-id="'+esc(u.id)+'"><div><span class="dot '+(u.enabled?'on':'off')+'" title="'+(u.enabled?'مفعّل':'موقوف')+'"></span><span class="un">'+esc(u.name)+'</span><span class="bd">'+(u.role==='admin'?'مدير':'مستخدم')+'</span>'+(me?'<span class="ro">(أنت)</span>':'')+'<span class="ro" style="margin-right:6px">'+(u.enabled?'مفعّل':'موقوف')+'</span>'+'</div>'+
     '<div>'+(u.role==='admin'?'<span class="ro">المدير بيقيّم كل الأقسام</span>':'<span class="ro">يقيّم:</span>'+GROUPS.map(g=>'<label class="cb"><input type="checkbox" data-g="'+esc(g)+'"'+(u.evalGroups.indexOf(g)>=0?' checked':'')+'>'+esc(g)+'</label>').join(''))+'</div>'+
     '<div class="acts">'+(me?'':'<button class="btn sec small" data-act="en">'+(u.enabled?'إيقاف':'تفعيل')+'</button>')+'<button class="btn sec small" data-act="role"'+(me?' disabled':'')+'>'+(u.role==='admin'?'خليه مستخدم':'خليه مدير')+'</button><button class="btn sec small" data-act="rc">كود جديد</button>'+(me?'':'<button class="btn danger small" data-act="del">مسح</button>')+'</div></div>'}).join('')||'<div class="empty">مفيش مستخدمين</div>';
   $('uList').querySelectorAll('.ubox').forEach(box=>{const u=USERS.find(x=>x.id===box.dataset.id);
@@ -841,21 +832,6 @@ lkApply();lkDraw();
 $('uAdd').onclick=async()=>{const name=$('uName').value.trim();if(!name)return toast('اكتب الاسم');
   try{const j=await post({saveUser:1,user:{name,role:$('uRole').value,enabled:true,evalGroups:Array.from(document.querySelectorAll('#uGroups [data-g]:checked')).map(x=>x.dataset.g)}});
     newCode={name,code:j.code};$('uName').value='';document.querySelectorAll('#uGroups [data-g]').forEach(x=>x.checked=false);await loadUsers()}catch(e){toast(e.message||e)}};
-
-/* ================= نسخة احتياطية ================= */
-$('btnBackup').onclick=()=>{const blob=new Blob([JSON.stringify({app:'work-labor',version:1,savedAt:new Date().toISOString(),data:S},null,1)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='عمالة-نسخة-'+todayStr()+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);toast('اتحفظت نسخة في ملف')};
-$('btnRestore').onclick=()=>$('fileRestore').click();
-$('fileRestore').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
-  try{let t=await f.text();t=t.replace(/^﻿/,'').trim();let o=JSON.parse(t);
-    if(o&&o.data&&typeof o.data==='object')o=o.data;
-    let recs=Array.isArray(o)?o:(Array.isArray(o.records)?o.records:null);
-    if(!recs)throw new Error('الملف مش نسخة من التطبيق ده');
-    recs=recs.filter(r=>r&&r.date&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&r.company).map(r=>Object.assign({id:r.id||uid(),type:'',shift:'',dept:'',count:0,hours:8,delayed:0,notes:'',manualCost:false,cost:null,ts:Date.now()},r,{synced:false}));
-    if(!await ask('استعادة النسخة؟','هيتحمّل '+recs.length+' تسجيل بدل اللي على الجهاز دلوقتي ('+S.records.length+'). التسجيلات هتتبعت للشيت تاني (بدون تكرار).','استعيد','لا'))return;
-    S.records=recs;S.pendingDel=[];if(!Array.isArray(o)&&o.settings){S.settings=Object.assign(S.settings,o.settings);S.settings.lists=Object.assign(JSON.parse(JSON.stringify(DEF.lists)),o.settings.lists||{})}
-    save();renderForm();renderSettings();updateSyncPill();sync();toast('اتستعادت '+recs.length+' تسجيل ✓')}
-  catch(err){toast('الملف مش مقروء: '+(err.message||err))}};
 
 /* ================= تثبيت التطبيق (للناس اللي مش بتعرف) ================= */
 let deferredInstall=null;
